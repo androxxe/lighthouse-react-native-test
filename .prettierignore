@@ -10,3 +10,5 @@ android
 *.svg
 
 .d.ts
+
+pnpm-lock.yaml
