@@ -11,10 +11,10 @@
   "version": "1.0.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "start": "expo start",
+    "start": "pnpm validate-env && expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "android": "pnpm validate-env && expo run:android",
+    "ios": "pnpm validate-env && expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
@@ -22,7 +22,8 @@
     "checker": "pnpm run check:ts && pnpm run lint && pnpm run prettier:check",
     "check:ts": "tsc",
     "prettier:check": "prettier --check .",
-    "prettier:fix": "prettier --write ."
+    "prettier:fix": "prettier --write .",
+    "validate-env": "dotenvx run -f .env.local -- node ./validate-env.mjs"
   },
   "jest": {
     "preset": "jest-expo"
@@ -61,10 +62,12 @@
     "@babel/core": "^7.25.2",
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
+    "@dotenvx/dotenvx": "^1.38.3",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.3.0",
     "clsx": "^2.1.1",
+    "envalid": "^8.0.0",
     "eslint": "^8.57.0",
     "eslint-config-expo": "~8.0.1",
     "eslint-config-prettier": "^10.0.2",
