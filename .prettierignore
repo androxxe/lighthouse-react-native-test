@@ -11,4 +11,4 @@ android
 
 .d.ts
 
-pnpm-lock.yaml
+yarn.lock

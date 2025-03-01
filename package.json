@@ -5,21 +5,20 @@
   "author": "Andrio Sirait",
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=18.18.0",
-    "pnpm": ">=9.4.0"
+    "node": ">=18.18.0"
   },
   "version": "1.0.0",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "start": "pnpm validate-env && expo start",
+    "preinstall": "npx only-allow yarn",
+    "start": "yarn validate-env && expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "pnpm validate-env && expo run:android",
-    "ios": "pnpm validate-env && expo run:ios",
+    "android": "yarn validate-env && expo run:android",
+    "ios": "yarn validate-env && expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
     "prepare": "husky",
-    "checker": "pnpm run check:ts && pnpm run lint && pnpm run prettier:check",
+    "checker": "yarn run check:ts && yarn run lint && yarn run prettier:check",
     "check:ts": "tsc",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
