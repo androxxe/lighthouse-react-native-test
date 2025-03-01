@@ -1,0 +1,12 @@
+scripts
+node_modules
+ios
+android
+# Ignore all .md files
+*.md
+# Ignore all .json files
+*.json
+# Ignore all .svg files
+*.svg
+
+.d.ts
