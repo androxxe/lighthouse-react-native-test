@@ -1,4 +1,4 @@
-import { ViewStyle } from "react-native";
+import { TextStyle, ViewStyle } from "react-native";
 import { FontWeightType, TextVariantType } from "../ThemedText/index.type";
 import React from "react";
 
@@ -38,7 +38,7 @@ export interface ButtonVariantInterface extends Omit<ButtonIconInterface, "size"
   fontColor?: string;
   iconSize?: string;
   icon?: React.ReactNode;
-  textClassName?: string;
+  textStyle?: TextStyle;
 }
 
 export interface ButtonInterface extends ButtonVariantInterface {

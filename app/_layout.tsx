@@ -16,6 +16,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import { useGetValidateToken } from "@/hooks/endpoints/useGetValidateToken";
 import { ModalConfirmation } from "@/components/ui/ModalConfirmation";
 import { ModalAlert } from "@/components/ui/ModalAlert";
+import { sleep } from "@/utils";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -73,11 +74,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { token } = useUserStore();
 
   const { mutate: validateToken } = useGetValidateToken({
-    onSuccess: () => {
-      router.replace("/home");
+    onSuccess: async () => {
+      router.replace("/(home)/today");
+      await sleep(1000);
       SplashScreen.hideAsync();
     },
-    onError: (error) => {
+    onError: () => {
       SplashScreen.hideAsync();
     },
   });

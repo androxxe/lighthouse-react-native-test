@@ -91,7 +91,7 @@ const ButtonBackground = (props: ButtonVariantInterface) => {
     size,
     width,
     containerStyle,
-    textClassName,
+    textStyle,
     isLoading,
   } = props;
 
@@ -111,7 +111,7 @@ const ButtonBackground = (props: ButtonVariantInterface) => {
         <ThemedText
           fontWeight={fontWeight || "bold"}
           variant={fontSize ? fontSize : size === "small" ? "small" : size === "extra-small" ? "extra-small" : "medium"}
-          style={twrnc`${textClassName ?? ""}`}
+          style={textStyle}
           color={"white"}
         >
           {label}
@@ -137,7 +137,7 @@ const ButtonSecondary = (props: ButtonVariantInterface) => {
     size,
     width,
     containerStyle,
-    textClassName,
+    textStyle,
     isLoading,
   } = props;
 
@@ -159,7 +159,7 @@ const ButtonSecondary = (props: ButtonVariantInterface) => {
         <ThemedText
           fontWeight={fontWeight || "bold"}
           variant={fontSize ? fontSize : size === "small" ? "small" : size === "extra-small" ? "extra-small" : "medium"}
-          style={twrnc`${cn(textClassName, disabled ? "opacity-50" : "")}`}
+          style={[twrnc`${disabled ? "opacity-50" : ""}`, textStyle]}
           color={color}
         >
           {label}

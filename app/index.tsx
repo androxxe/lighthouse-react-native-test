@@ -57,7 +57,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (isSuccess) {
-      router.replace("/home");
+      router.replace("/(home)/today");
     }
   }, [isSuccess]);
 
