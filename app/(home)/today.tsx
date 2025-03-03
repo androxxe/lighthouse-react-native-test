@@ -2,13 +2,15 @@ import { Header } from "@/components/Header";
 import { ListTask } from "@/components/ListTask";
 import { ThemedView } from "@/components/ThemedView";
 import { Button } from "@/components/ui/Button";
+import { useBottomSheetCreateTask } from "@/hooks/states/useBottomSheetCreateTask";
 import { Feather } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import twrnc from "twrnc";
 
 export default function HomeScreen() {
+  const { setIsVisible } = useBottomSheetCreateTask();
+
   return (
     <SafeAreaView style={twrnc`flex-1`}>
       <Header />
@@ -32,7 +34,7 @@ export default function HomeScreen() {
           variant="icon"
           containerStyle={twrnc`w-12 h-12 p-0`}
           icon={<Feather name="plus" size={24} color={twrnc.color("white")} />}
-          onPress={() => router.navigate("/task/create")}
+          onPress={() => setIsVisible(true)}
         />
       </ThemedView>
     </SafeAreaView>

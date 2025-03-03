@@ -2,7 +2,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RefObject, useCallback, useEffect, useState } from "react";
 import { BackHandler } from "react-native";
 
-export const useBackHandlerBottomSheet = (bottomSheetRef: RefObject<BottomSheetModal>) => {
+export const useBackHandlerBottomSheet = (bottomSheetRef: RefObject<BottomSheetModal>, backAction?: () => boolean) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [index, setIndex] = useState<number>(-1);
 
@@ -11,7 +11,7 @@ export const useBackHandlerBottomSheet = (bottomSheetRef: RefObject<BottomSheetM
     setIndex(index);
   };
 
-  const backAction = useCallback((): boolean => {
+  const defaultBackAction = useCallback((): boolean => {
     if (isOpen) {
       bottomSheetRef.current?.close();
     }
@@ -21,12 +21,12 @@ export const useBackHandlerBottomSheet = (bottomSheetRef: RefObject<BottomSheetM
   }, [isOpen]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction ? backAction : defaultBackAction);
 
     return () => {
       backHandler.remove();
     };
-  }, [isOpen, backAction]);
+  }, [isOpen, backAction, defaultBackAction]);
 
   return {
     isOpen,

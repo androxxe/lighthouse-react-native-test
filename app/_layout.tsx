@@ -17,11 +17,27 @@ import { useGetValidateToken } from "@/hooks/endpoints/useGetValidateToken";
 import { ModalConfirmation } from "@/components/ui/ModalConfirmation";
 import { ModalAlert } from "@/components/ui/ModalAlert";
 import { sleep } from "@/utils";
+import { BottomSheetCreateTask } from "@/components/BottomSheetCreateTask";
+import { createMergeableStore, Store } from "tinybase";
+import { createExpoSqlitePersister } from "tinybase/persisters/persister-expo-sqlite";
+import { Provider, useCreateMergeableStore, useCreatePersister } from "tinybase/ui-react";
+import * as SQLite from "expo-sqlite";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export const queryClient = new QueryClient();
+
+const useAndStartPersister = (store: Store) =>
+  useCreatePersister(
+    store,
+    (store) => createExpoSqlitePersister(store, SQLite.openDatabaseSync("lighthouse-task-test.db")),
+    [],
+    (persister) =>
+      new Promise((resolve) => {
+        persister.load().then(() => persister.startAutoSave().then(() => resolve()));
+      }),
+  );
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -40,38 +56,44 @@ export default function RootLayout() {
     }
   }, [loaded, token]);
 
+  const store = useCreateMergeableStore(createMergeableStore);
+  useAndStartPersister(store);
+
   if (!loaded) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <GestureHandlerRootView style={twrnc`flex-1`}>
-        <QueryClientProvider client={queryClient}>
-          <BottomSheetModalProvider>
-            <AuthProvider>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                }}
-              >
-                <Stack.Screen
-                  name="task/create"
-                  options={{
-                    headerShown: true,
-                    title: "Create Task",
+    <Provider store={store}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <GestureHandlerRootView style={twrnc`flex-1`}>
+          <QueryClientProvider client={queryClient}>
+            <BottomSheetModalProvider>
+              <AuthProvider>
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
                   }}
-                />
-              </Stack>
-              <StatusBar style="auto" />
-            </AuthProvider>
-          </BottomSheetModalProvider>
-        </QueryClientProvider>
-      </GestureHandlerRootView>
-      <ModalConfirmation />
-      <ModalAlert />
-      <Toast />
-    </ThemeProvider>
+                >
+                  <Stack.Screen
+                    name="task/create"
+                    options={{
+                      headerShown: true,
+                      title: "Create Task",
+                    }}
+                  />
+                </Stack>
+                <StatusBar style="auto" />
+              </AuthProvider>
+              <BottomSheetCreateTask />
+              <ModalConfirmation />
+              <ModalAlert />
+              <Toast />
+            </BottomSheetModalProvider>
+          </QueryClientProvider>
+        </GestureHandlerRootView>
+      </ThemeProvider>
+    </Provider>
   );
 }
 

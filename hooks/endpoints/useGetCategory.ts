@@ -11,6 +11,8 @@ export const getCategory = async (): Promise<CategoryResponseInterface> => {
   return data;
 };
 
+export const CATEGORY_LIST_QUERY_KEY = ["category", "list"];
+
 export const useGetCategory = (
   options?: Omit<
     UseQueryOptions<CategoryResponseInterface, AxiosError<BaseResponseInterface<unknown>>>,
@@ -18,7 +20,7 @@ export const useGetCategory = (
   >,
 ) => {
   return useQuery({
-    queryKey: ["category", "list"],
+    queryKey: CATEGORY_LIST_QUERY_KEY,
     queryFn: () => getCategory(),
     ...options,
   });

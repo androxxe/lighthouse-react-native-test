@@ -24,8 +24,8 @@ export default function LoginScreen() {
 
   const formik = useFormik<yup.InferType<typeof loginSchema>>({
     initialValues: {
-      email: "",
-      password: "",
+      email: __DEV__ ? "andriopratama16@gmail.com" : "",
+      password: __DEV__ ? "P@ssword123" : "",
     },
     validationSchema: loginSchema,
     onSubmit: (values) => login(values),

@@ -11,6 +11,8 @@ export const getProject = async (): Promise<ProjectResponseInterface> => {
   return data;
 };
 
+export const PROJECT_LIST_QUERY_KEY = ["project", "list"];
+
 export const useGetProject = (
   options?: Omit<
     UseQueryOptions<ProjectResponseInterface, AxiosError<BaseResponseErrorInterface<unknown>>>,
@@ -18,7 +20,7 @@ export const useGetProject = (
   >,
 ) => {
   return useQuery({
-    queryKey: ["project", "list"],
+    queryKey: PROJECT_LIST_QUERY_KEY,
     queryFn: () => getProject(),
     ...options,
   });
