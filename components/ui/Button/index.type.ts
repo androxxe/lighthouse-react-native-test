@@ -1,3 +1,4 @@
+import { ViewStyle } from "react-native";
 import { FontWeightType, TextVariantType } from "../ThemedText/index.type";
 import React from "react";
 
@@ -24,7 +25,7 @@ export interface ButtonBaseProps {
   onPress: () => void;
   children?: React.ReactNode;
   disabled?: boolean;
-  containerClassName?: string;
+  containerStyle?: ViewStyle;
   isLoading?: boolean;
   variant: ButtonVariantType;
 }

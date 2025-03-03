@@ -39,7 +39,7 @@ const ButtonBase = (props: ButtonBaseProps) => {
     children,
     onPress,
     disabled = false,
-    containerClassName,
+    containerStyle,
     isLoading,
     variant,
   } = props;
@@ -59,8 +59,8 @@ const ButtonBase = (props: ButtonBaseProps) => {
           "flex items-center justify-center flex-row",
           size === "small" ? "rounded-lg" : size === "extra-small" ? "rounded-xl" : "rounded-xl",
           !height || !width ? buttonSizeMapper[size] : "",
-          containerClassName,
         )}`,
+        ...containerStyle,
       }}
     >
       {isLoading && (
@@ -90,7 +90,7 @@ const ButtonBackground = (props: ButtonVariantInterface) => {
     height,
     size,
     width,
-    containerClassName,
+    containerStyle,
     textClassName,
     isLoading,
   } = props;
@@ -103,7 +103,7 @@ const ButtonBackground = (props: ButtonVariantInterface) => {
       backgroundColor={twrnc.color(color)}
       height={height}
       width={width}
-      containerClassName={cn(containerClassName, disabled ? "opacity-50" : "")}
+      containerStyle={twrnc`${cn(containerStyle, disabled ? "opacity-50" : "")}`}
       isLoading={isLoading}
       variant={"background"}
     >
@@ -136,7 +136,7 @@ const ButtonSecondary = (props: ButtonVariantInterface) => {
     height,
     size,
     width,
-    containerClassName,
+    containerStyle,
     textClassName,
     isLoading,
   } = props;
@@ -151,7 +151,7 @@ const ButtonSecondary = (props: ButtonVariantInterface) => {
       width={width}
       borderWidth={1.5}
       borderColor={twrnc.color("purple-700")}
-      containerClassName={containerClassName}
+      containerStyle={containerStyle}
       isLoading={isLoading}
       variant="secondary"
     >
@@ -180,7 +180,7 @@ const ButtonIcon = (props: ButtonVariantInterface) => {
     height,
     size,
     width,
-    containerClassName,
+    containerStyle,
     isLoading,
   } = props;
 
@@ -194,7 +194,7 @@ const ButtonIcon = (props: ButtonVariantInterface) => {
       width={width}
       borderWidth={1}
       borderColor={borderColor || color}
-      containerClassName={containerClassName}
+      containerStyle={containerStyle}
       isLoading={isLoading}
       variant="icon"
     >

@@ -16,7 +16,7 @@ export const axiosInterceptorRequest = (headerConfig: InternalAxiosRequestConfig
   const token = useUserStore.getState().token;
 
   if (token) {
-    headerConfig.headers.Authorization = token;
+    headerConfig.headers.Authorization = `Bearer ${token}`;
   }
 
   // No need to return a new object, just return the modified headerConfig

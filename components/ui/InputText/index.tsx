@@ -14,7 +14,7 @@ const sizeMapper: Record<InputTypeSizeType, string> = {
 };
 
 const InputTextBase = (props: InputTextInterface) => {
-  const { value, error, label, containerClassName, counter, children, isRequired } = props;
+  const { value, error, label, containerStyle, counter, children, isRequired } = props;
 
   const textInputRef = useRef<TextInput>(null);
 
@@ -25,7 +25,7 @@ const InputTextBase = (props: InputTextInterface) => {
   }, []);
 
   return (
-    <View style={twrnc`${cn("relative", containerClassName)}`}>
+    <View style={[twrnc`relative`, containerStyle]}>
       <View style={twrnc`flex flex-row items-center justify-between`}>
         {label && (
           <View style={twrnc`flex flex-row items-center mb-1.5`}>

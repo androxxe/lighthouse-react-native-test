@@ -1,5 +1,5 @@
 import React from "react";
-import { TextInput } from "react-native";
+import { TextInput, ViewStyle } from "react-native";
 import { TextVariantType } from "../ThemedText/index.type";
 
 export type InputTextVariantType = "regular";
@@ -24,7 +24,7 @@ export interface InputTextInterface extends React.ComponentProps<typeof TextInpu
   onDelete?: (() => void) | null;
   maxHeightTextArea?: number;
   label?: string;
-  containerClassName?: string;
+  containerStyle?: ViewStyle;
   autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined;
   autoCorrect?: boolean;
   fontSize?: TextVariantType;

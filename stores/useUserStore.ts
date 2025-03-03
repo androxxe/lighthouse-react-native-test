@@ -13,6 +13,7 @@ type UseUserStoreProps = {
   setUser: (user: UserInterface) => void;
   token: string | undefined;
   setToken: (token: string) => void;
+  reset: () => void;
 };
 
 export const useUserStore = create<UseUserStoreProps>()(
@@ -22,6 +23,7 @@ export const useUserStore = create<UseUserStoreProps>()(
       setUser: (user: UserInterface) => set({ user }),
       token: undefined,
       setToken: (token: string) => set({ token }),
+      reset: () => set({ user: undefined, token: undefined }),
     }),
     {
       name: "user",

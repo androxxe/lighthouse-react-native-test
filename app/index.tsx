@@ -76,13 +76,15 @@ export default function LoginScreen() {
             onChangeText={(value) => formik.setFieldValue("email", value)}
             error={formik.errors?.email}
             label="Email"
-            placeholder="Masukkan"
+            placeholder="Masukkan email"
           />
           <InputText
             value={formik.values.password}
             onChangeText={(value) => formik.setFieldValue("password", value)}
             error={formik.errors?.password}
             label="Password"
+            placeholder="Masukkan password"
+            isSecureTextEntry
           />
           <Button
             variant="background"
