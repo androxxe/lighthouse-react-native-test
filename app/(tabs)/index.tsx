@@ -2,7 +2,7 @@ import { Image, StyleSheet, Platform } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/ui/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 export default function HomeScreen() {
@@ -12,14 +12,14 @@ export default function HomeScreen() {
       headerImage={<Image source={require("@/assets/images/partial-react-logo.png")} style={styles.reactLogo} />}
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText variant="extra-small">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
+        <ThemedText variant="large">Step 1: Try it</ThemedText>
+        <ThemedText variant="extra-large">
+          Edit <ThemedText variant="extra-large">app/(tabs)/index.tsx</ThemedText> to see changes. Press{" "}
+          <ThemedText variant="extra-large">
             {Platform.select({
               ios: "cmd + d",
               android: "cmd + m",
@@ -30,16 +30,18 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>Tap the Explore tab to learn more about what's included in this starter app.</ThemedText>
+        <ThemedText variant="large">Step 2: Explore</ThemedText>
+        <ThemedText variant="extra-large">
+          Tap the Explore tab to learn more about what's included in this starter app.
+        </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
+        <ThemedText variant="large">Step 3: Get a fresh start</ThemedText>
+        <ThemedText variant="extra-large">
+          When you're ready, run <ThemedText variant="extra-large">npm run reset-project</ThemedText> to get a fresh{" "}
+          <ThemedText variant="extra-large">app</ThemedText> directory. This will move the current{" "}
+          <ThemedText variant="extra-large">app</ThemedText> to{" "}
+          <ThemedText variant="extra-large">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
     </ParallaxScrollView>

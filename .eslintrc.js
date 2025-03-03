@@ -10,6 +10,7 @@ module.exports = {
     "no-console": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "prettier/prettier": ["error", { endOfLine: "auto" }],
-    "import/no-unresolved": "error",
+    "import/no-unresolved": "off",
+    "@typescript-eslint/no-empty-object-type": "off",
   },
 };

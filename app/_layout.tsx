@@ -6,6 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import twrnc from "twrnc";
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -21,6 +22,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMonoBold: require("../assets/fonts/SpaceMono-Bold.ttf"),
   });
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export default function RootLayout() {
           </QueryClientProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
+      <Toast />
     </ThemeProvider>
   );
 }
