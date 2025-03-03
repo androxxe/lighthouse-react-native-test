@@ -34,8 +34,6 @@ export default function LoginScreen() {
   const { mutate: login, isPending } = usePostLogin({
     onSuccess: (data) => {
       setToken(data.data.access_token);
-      setUser(data.data.user);
-
       getProfile();
     },
     onError: (error) => {
@@ -48,6 +46,7 @@ export default function LoginScreen() {
   });
 
   const {
+    data: user,
     refetch: getProfile,
     isLoading,
     isSuccess,
@@ -56,10 +55,12 @@ export default function LoginScreen() {
   });
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && user.data) {
+      setUser(user.data.user);
       router.replace("/(home)/today");
     }
-  }, [isSuccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, user?.data.user]);
 
   return (
     <SafeAreaView style={twrnc`flex-1`}>
@@ -74,14 +75,14 @@ export default function LoginScreen() {
           <InputText
             value={formik.values.email}
             onChangeText={(value) => formik.setFieldValue("email", value)}
-            error={formik.errors?.email}
+            error={formik.touched?.email && formik.errors?.email}
             label="Email"
             placeholder="Masukkan email"
           />
           <InputText
             value={formik.values.password}
             onChangeText={(value) => formik.setFieldValue("password", value)}
-            error={formik.errors?.password}
+            error={formik.touched?.password && formik.errors?.password}
             label="Password"
             placeholder="Masukkan password"
             isSecureTextEntry

@@ -1,6 +1,6 @@
 import { cn, widthByScale } from "@/utils";
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import Fuse from "fuse.js";
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
