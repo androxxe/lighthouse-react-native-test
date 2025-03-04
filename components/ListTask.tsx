@@ -8,10 +8,10 @@ import { TaskInterface } from "@/types/task";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { BadgePriority } from "./ui/BadgePriority";
-import { useBottomSheetCreateTaskContext } from "@/hooks/stores/useBottomSheetCreateTaskStore";
+import { useBottomSheetFormTaskContext } from "@/hooks/stores/useBottomSheetFormTaskStore";
 
 export const ListTask = ({ task }: { task: TaskInterface }) => {
-  const { setIsVisible, setDefaultValue } = useBottomSheetCreateTaskContext();
+  const { setIsVisible, setEditValue } = useBottomSheetFormTaskContext();
 
   return (
     <TouchableOpacity style={twrnc`bg-white px-4 py-2 flex flex-row items-center`} activeOpacity={0.8}>
@@ -36,7 +36,7 @@ export const ListTask = ({ task }: { task: TaskInterface }) => {
       <TouchableOpacity
         onPress={() => {
           setIsVisible(true);
-          setDefaultValue({
+          setEditValue({
             task_id: task.id,
             name: task.name,
             description: task.description,

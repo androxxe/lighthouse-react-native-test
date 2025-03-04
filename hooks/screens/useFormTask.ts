@@ -5,10 +5,10 @@ import { router } from "expo-router";
 import { useTinybaseCategoryList } from "../tinybase/useTinybaseCategoryList";
 import { useTinybaseProjectList } from "../tinybase/useTinybaseProjectList";
 import { usePatchTask } from "../endpoints/usePatchTask";
-import { useBottomSheetCreateTaskContext } from "../stores/useBottomSheetCreateTaskStore";
+import { useBottomSheetFormTaskContext } from "../stores/useBottomSheetFormTaskStore";
 
-export const useCreateTask = () => {
-  const { setIsVisible, setDefaultValue } = useBottomSheetCreateTaskContext();
+export const useFormTask = () => {
+  const { setIsVisible, setEditValue } = useBottomSheetFormTaskContext();
 
   const project = useTinybaseProjectList();
   const category = useTinybaseCategoryList();
@@ -34,7 +34,7 @@ export const useCreateTask = () => {
 
   const taskEdit = usePatchTask({
     onSuccess: (data) => {
-      setDefaultValue(undefined);
+      setEditValue(undefined);
       setIsVisible(false);
       Toast.show({
         text1: "Task updated",

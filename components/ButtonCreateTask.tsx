@@ -1,11 +1,11 @@
 import twrnc from "twrnc";
 import { Button } from "./ui/Button";
 import { View } from "react-native";
-import { useBottomSheetCreateTaskContext } from "@/hooks/stores/useBottomSheetCreateTaskStore";
+import { useBottomSheetFormTaskContext } from "@/hooks/stores/useBottomSheetFormTaskStore";
 import { Feather } from "@expo/vector-icons";
 
 export const ButtonCreateTask = () => {
-  const { setIsVisible, setDefaultValue } = useBottomSheetCreateTaskContext();
+  const { setIsVisible, setEditValue } = useBottomSheetFormTaskContext();
 
   return (
     <View style={twrnc`p-4 flex items-end`}>
@@ -17,7 +17,7 @@ export const ButtonCreateTask = () => {
         icon={<Feather name="plus" size={24} color={twrnc.color("white")} />}
         onPress={() => {
           setIsVisible(true);
-          setDefaultValue(undefined);
+          setEditValue(undefined);
         }}
       />
     </View>

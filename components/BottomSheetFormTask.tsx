@@ -10,13 +10,13 @@ import * as yup from "yup";
 import twrnc from "twrnc";
 import { InputDatePicker } from "@/components/ui/InputDatePicker";
 import { InputSelect } from "@/components/ui/InputSelect";
-import { useCreateTask } from "@/hooks/screens/useCreateTask";
+import { useFormTask } from "@/hooks/screens/useFormTask";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 import { useBackHandlerBottomSheet } from "@/hooks/useBackHandlerBottomSheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import { InputPriority } from "./ui/InputPriority";
-import { useBottomSheetCreateTaskContext } from "@/hooks/stores/useBottomSheetCreateTaskStore";
+import { useBottomSheetFormTaskContext } from "@/hooks/stores/useBottomSheetFormTaskStore";
 import { usePostCategory } from "@/hooks/endpoints/usePostCategory";
 import { usePostProject } from "@/hooks/endpoints/usePostProject";
 import Toast from "react-native-toast-message";
@@ -28,13 +28,13 @@ import { useDeleteCategory } from "@/hooks/endpoints/useDeleteCategory";
 import { usePatchProject } from "@/hooks/endpoints/usePatchProject";
 import { useDeleteProject } from "@/hooks/endpoints/useDeleteProject";
 
-export interface BottomSheetCreateTaskRef {
+export interface BottomSheetFormTaskRef {
   present: () => void;
   close: () => void;
 }
 
-export const BottomSheetCreateTask = forwardRef<BottomSheetCreateTaskRef>((_, ref) => {
-  const { isVisible, setIsVisible, defaultValue } = useBottomSheetCreateTaskContext();
+export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) => {
+  const { isVisible, setIsVisible, editValue } = useBottomSheetFormTaskContext();
 
   const formik = useFormik<yup.InferType<typeof taskCreateSchema>>({
     initialValues: {
@@ -47,10 +47,10 @@ export const BottomSheetCreateTask = forwardRef<BottomSheetCreateTaskRef>((_, re
     },
     validationSchema: taskCreateSchema,
     onSubmit: (values) => {
-      if (defaultValue) {
+      if (editValue) {
         taskEdit.mutate({
           ...values,
-          task_id: defaultValue.task_id,
+          task_id: editValue.task_id,
         });
       } else {
         task.mutate(values);
@@ -59,15 +59,15 @@ export const BottomSheetCreateTask = forwardRef<BottomSheetCreateTaskRef>((_, re
   });
 
   useEffect(() => {
-    if (defaultValue) {
-      formik.setValues(defaultValue);
+    if (editValue) {
+      formik.setValues(editValue);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultValue]);
+  }, [editValue]);
 
   const queryClient = useQueryClient();
 
-  const { project, category, task, taskEdit } = useCreateTask();
+  const { project, category, task, taskEdit } = useFormTask();
 
   const { mutate: postCategory } = usePostCategory({
     onSuccess: () => {
@@ -296,4 +296,4 @@ export const BottomSheetCreateTask = forwardRef<BottomSheetCreateTaskRef>((_, re
   );
 });
 
-BottomSheetCreateTask.displayName = "BottomSheetCreateTask";
+BottomSheetFormTask.displayName = "BottomSheetFormTask";

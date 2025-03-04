@@ -15,10 +15,10 @@ import { useUserStore } from "@/hooks/stores/useUserStore";
 import { useGetValidateToken } from "@/hooks/endpoints/useGetValidateToken";
 import { ModalConfirmation } from "@/components/ui/ModalConfirmation";
 import { ModalAlert } from "@/components/ui/ModalAlert";
-import { BottomSheetCreateTask } from "@/components/BottomSheetCreateTask";
+import { BottomSheetFormTask } from "@/components/BottomSheetFormTask";
 import { createMergeableStore } from "tinybase";
 import { Provider as TinyBaseProvider, useCreateMergeableStore } from "tinybase/ui-react";
-import { BottomSheetCreateTaskProvider } from "@/hooks/stores/useBottomSheetCreateTaskStore";
+import { BottomSheetFormTaskProvider } from "@/hooks/stores/useBottomSheetFormTaskStore";
 import { useCreateClientPersisterAndStart } from "@/hooks/tinybase/persister/useCreateClientPersisterAndStart";
 import { OfflineMode } from "@/components/ui/OfflineMode";
 
@@ -56,7 +56,7 @@ export default function RootLayout() {
 
   return (
     <TinyBaseProvider store={store}>
-      <BottomSheetCreateTaskProvider>
+      <BottomSheetFormTaskProvider>
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
           <GestureHandlerRootView style={twrnc`flex-1`}>
             <QueryClientProvider client={queryClient}>
@@ -69,7 +69,7 @@ export default function RootLayout() {
                   ></Stack>
                   <StatusBar style="auto" />
                 </AuthProvider>
-                <BottomSheetCreateTask />
+                <BottomSheetFormTask />
                 <ModalConfirmation />
                 <ModalAlert />
                 <Toast />
@@ -78,7 +78,7 @@ export default function RootLayout() {
             </QueryClientProvider>
           </GestureHandlerRootView>
         </ThemeProvider>
-      </BottomSheetCreateTaskProvider>
+      </BottomSheetFormTaskProvider>
     </TinyBaseProvider>
   );
 }
