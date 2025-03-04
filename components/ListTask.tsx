@@ -8,8 +8,11 @@ import { TaskInterface } from "@/types/task";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { BadgePriority } from "./ui/BadgePriority";
+import { useBottomSheetCreateTaskContext } from "@/hooks/stores/useBottomSheetCreateTaskStore";
 
 export const ListTask = ({ task }: { task: TaskInterface }) => {
+  const { setIsVisible, setDefaultValue } = useBottomSheetCreateTaskContext();
+
   return (
     <TouchableOpacity style={twrnc`bg-white px-4 py-2 flex flex-row items-center`} activeOpacity={0.8}>
       <ThemedView style={twrnc`w-`}>
@@ -30,7 +33,20 @@ export const ListTask = ({ task }: { task: TaskInterface }) => {
           {task.priority && <BadgePriority priority={task.priority} />}
         </ThemedView>
       </ThemedView>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setIsVisible(true);
+          setDefaultValue({
+            task_id: task.id,
+            name: task.name,
+            description: task.description,
+            priority: task.priority,
+            due_date: dayjs(task.due_date).toDate(),
+            project_id: task.project?.id,
+            category_ids: task.task_categories.map((item) => item.id),
+          });
+        }}
+      >
         <Feather name="edit" color={twrnc.color("purple-500")} size={16} />
       </TouchableOpacity>
     </TouchableOpacity>

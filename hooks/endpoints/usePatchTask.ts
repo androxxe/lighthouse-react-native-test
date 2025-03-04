@@ -9,7 +9,7 @@ import { ProjectResponseInterface } from "./useGetProject";
 import { CategoryResponseInterface } from "./useGetCategory";
 import { Status } from "@/enums/status";
 
-interface CreateTaskResponseInterface
+interface PatchTaskResponseInterface
   extends BaseResponseInterface<{
     id: string;
     name: string;
@@ -27,23 +27,23 @@ interface CreateTaskResponseInterface
     task_categories: CategoryResponseInterface["data"];
   }> {}
 
-type CreateTaskPayload = yup.InferType<typeof taskCreateSchema>;
+type PatchTaskPayload = Partial<yup.InferType<typeof taskCreateSchema>> & { task_id: string };
 
-export const postTask = async (payload: CreateTaskPayload): Promise<CreateTaskResponseInterface> => {
-  const { data } = await axiosInstance.post("/v1/task", payload);
+export const patchTask = async (payload: PatchTaskPayload): Promise<PatchTaskResponseInterface> => {
+  const { data } = await axiosInstance.patch(`/v1/task/${payload.task_id}`, payload);
 
   return data;
 };
 
-export const usePostTask = (
+export const usePatchTask = (
   options: Omit<
-    UseMutationOptions<CreateTaskResponseInterface, AxiosError<BaseResponseErrorInterface<unknown>>, CreateTaskPayload>,
+    UseMutationOptions<PatchTaskResponseInterface, AxiosError<BaseResponseErrorInterface<unknown>>, PatchTaskPayload>,
     "mutationFn" | "mutationKey"
   >,
 ) => {
   return useMutation({
-    mutationKey: ["task", "create"],
-    mutationFn: (payload: CreateTaskPayload) => postTask(payload),
+    mutationKey: ["task", "patch"],
+    mutationFn: (payload: PatchTaskPayload) => patchTask(payload),
     ...options,
   });
 };

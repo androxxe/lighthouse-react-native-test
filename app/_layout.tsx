@@ -20,6 +20,7 @@ import { createMergeableStore } from "tinybase";
 import { Provider as TinyBaseProvider, useCreateMergeableStore } from "tinybase/ui-react";
 import { BottomSheetCreateTaskProvider } from "@/hooks/stores/useBottomSheetCreateTaskStore";
 import { useCreateClientPersisterAndStart } from "@/hooks/tinybase/persister/useCreateClientPersisterAndStart";
+import { OfflineMode } from "@/components/ui/OfflineMode";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -72,6 +73,7 @@ export default function RootLayout() {
                 <ModalConfirmation />
                 <ModalAlert />
                 <Toast />
+                <OfflineMode />
               </BottomSheetModalProvider>
             </QueryClientProvider>
           </GestureHandlerRootView>

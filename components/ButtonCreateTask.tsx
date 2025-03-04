@@ -5,7 +5,7 @@ import { useBottomSheetCreateTaskContext } from "@/hooks/stores/useBottomSheetCr
 import { Feather } from "@expo/vector-icons";
 
 export const ButtonCreateTask = () => {
-  const { setIsVisible } = useBottomSheetCreateTaskContext();
+  const { setIsVisible, setDefaultValue } = useBottomSheetCreateTaskContext();
 
   return (
     <View style={twrnc`p-4 flex items-end`}>
@@ -15,7 +15,10 @@ export const ButtonCreateTask = () => {
         variant="icon"
         containerStyle={twrnc`w-12 h-12 p-0`}
         icon={<Feather name="plus" size={24} color={twrnc.color("white")} />}
-        onPress={() => setIsVisible(true)}
+        onPress={() => {
+          setIsVisible(true);
+          setDefaultValue(undefined);
+        }}
       />
     </View>
   );

@@ -34,6 +34,8 @@ export interface BottomSheetCreateTaskRef {
 }
 
 export const BottomSheetCreateTask = forwardRef<BottomSheetCreateTaskRef>((_, ref) => {
+  const { isVisible, setIsVisible, defaultValue } = useBottomSheetCreateTaskContext();
+
   const formik = useFormik<yup.InferType<typeof taskCreateSchema>>({
     initialValues: {
       name: "",
@@ -44,14 +46,28 @@ export const BottomSheetCreateTask = forwardRef<BottomSheetCreateTaskRef>((_, re
       category_ids: [],
     },
     validationSchema: taskCreateSchema,
-    onSubmit: (values) => task.mutate(values),
+    onSubmit: (values) => {
+      if (defaultValue) {
+        taskEdit.mutate({
+          ...values,
+          task_id: defaultValue.task_id,
+        });
+      } else {
+        task.mutate(values);
+      }
+    },
   });
 
-  const { isVisible, setIsVisible } = useBottomSheetCreateTaskContext();
+  useEffect(() => {
+    if (defaultValue) {
+      formik.setValues(defaultValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValue]);
 
   const queryClient = useQueryClient();
 
-  const { project, category, task } = useCreateTask();
+  const { project, category, task, taskEdit } = useCreateTask();
 
   const { mutate: postCategory } = usePostCategory({
     onSuccess: () => {
