@@ -1,4 +1,4 @@
-import { cn, widthByScale } from "@/utils";
+import { alertNetworkOffline, cn, widthByScale } from "@/utils";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
@@ -15,6 +15,7 @@ import { ThemedView } from "@/components/ThemedView";
 import twrnc from "twrnc";
 import { useBackHandlerBottomSheet } from "@/hooks/useBackHandlerBottomSheet";
 import { Button } from "../Button";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 const fuseOptions = {
   includeScore: true,
@@ -34,6 +35,8 @@ const SelectList = memo(
   }) => {
     const { value, onPress, isSelected, onPressRemove, onPressUpdate } = props;
 
+    const { isConnected } = useNetInfo();
+
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
     const [label, setLabel] = useState<string>(String(value.label));
@@ -45,6 +48,9 @@ const SelectList = memo(
             value={label}
             variant="regular"
             onSubmitEditing={(data) => {
+              if (!isConnected) {
+                return alertNetworkOffline();
+              }
               onPressUpdate({
                 label: data.nativeEvent.text,
                 value: value.value,
@@ -92,6 +98,10 @@ const SelectList = memo(
                       {
                         text: "Ya",
                         onPress: () => {
+                          if (!isConnected) {
+                            return alertNetworkOffline();
+                          }
+
                           onPressRemove(value);
                         },
                       },
@@ -138,6 +148,7 @@ export const InputSelect = (props: InputSelectInterface) => {
   const [dataFiltered, setDataFiltered] = useState<InputSelectData[]>(data);
   const [selectedValues, setSelectedValues] = useState<InputSelectData[]>([]);
 
+  const { isConnected } = useNetInfo();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const openModal = useCallback(() => {
@@ -295,7 +306,13 @@ export const InputSelect = (props: InputSelectInterface) => {
                       variant="background"
                       size="small"
                       label="Tambah"
-                      onPress={() => onPressAdd(search)}
+                      onPress={() => {
+                        if (!isConnected) {
+                          return alertNetworkOffline();
+                        }
+
+                        onPressAdd(search);
+                      }}
                     />
                   ) : null}
                 </View>

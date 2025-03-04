@@ -4,9 +4,9 @@ import { ThemedText } from "../ThemedText";
 import twrnc from "twrnc";
 
 export const OfflineMode = () => {
-  const netInfo = useNetInfo();
+  const { isConnected } = useNetInfo();
 
-  if (netInfo.isConnected) return null;
+  if (isConnected) return null;
 
   return (
     <ThemedView style={twrnc`bg-red-500 py-3 flex items-center justify-center`}>

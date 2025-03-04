@@ -6,20 +6,18 @@ import { Button } from "@/components/ui/Button";
 import { InputCheckboxData } from "@/components/ui/InputCheckbox/index.type";
 import { Status } from "@/enums/status";
 import { usePatchTask } from "@/hooks/endpoints/usePatchTask";
-import { useUserStore } from "@/hooks/stores/useUserStore";
-import { BaseSocketIOInterface } from "@/types/base-socketio";
-import { TaskInterface, TaskListBroadcastInterface } from "@/types/task";
-import { useCallback, useEffect, useState } from "react";
+import { useTaskSocketIO } from "@/hooks/screens/useTaskSocketIO";
+import { useCallback, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { io } from "socket.io-client";
 import twrnc from "twrnc";
 
 export default function HomeScreen() {
-  const [taskList, setTaskList] = useState<TaskInterface[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
+
+  const { tasks } = useTaskSocketIO();
 
   const { mutate: patchTask } = usePatchTask({
     onSuccess: () => {
@@ -38,31 +36,6 @@ export default function HomeScreen() {
     },
   });
 
-  useEffect(() => {
-    const socket = io(process.env.EXPO_PUBLIC_SOCKET_URL, {
-      extraHeaders: {
-        Authorization: `Bearer ${useUserStore.getState().token}`,
-      },
-    });
-
-    socket.emit("task", {
-      page: 1,
-      per_page: 1000,
-    });
-
-    socket.on("task-list", (event: BaseSocketIOInterface<TaskListBroadcastInterface>) => {
-      setTaskList(event?.data?.data ?? []);
-    });
-
-    socket.on("exception", (data: BaseSocketIOInterface<unknown>) => {
-      Toast.show({
-        text1: "Terjadi kesalahan",
-        text2: data.message,
-        type: "error",
-      });
-    });
-  }, []);
-
   const onCheckboxChange = useCallback(
     (task_id: string, value: InputCheckboxData[]) => {
       const isChecked = checked.includes(task_id);
@@ -80,7 +53,7 @@ export default function HomeScreen() {
       <Header title="Today" />
       <ScrollView>
         <ThemedView style={twrnc`gap-y-4`}>
-          {taskList.map((task, index) => (
+          {tasks.map((task, index) => (
             <ListTask
               task={task}
               key={index}
