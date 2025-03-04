@@ -11,7 +11,7 @@ export const ModalConfirmation = () => {
 
   return (
     <Modal animationType="slide" transparent={true} visible={isVisible}>
-      <View style={twrnc`w-full absolute h-full bg-gray-800 opacity-50`} />
+      <View style={twrnc`w-full absolute h-full bg-slate-800 opacity-50`} />
       <View
         style={twrnc`w-[75%] bg-white p-4 rounded-xl self-center flex items-center justify-center flex-col my-auto`}
       >

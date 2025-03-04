@@ -2,13 +2,13 @@ import React from "react";
 import { TextInput, ViewStyle } from "react-native";
 import { TextVariantType } from "../ThemedText/index.type";
 
-export type InputTextVariantType = "regular";
+export type InputTextVariantType = "regular" | "bottom-sheet";
 
 export type InputTypeSizeType = "regular" | "small";
 
 export interface InputTextInterface extends React.ComponentProps<typeof TextInput> {
   variant?: InputTextVariantType;
-  value: string;
+  value?: string;
   isRequired?: boolean;
   isNumerical?: boolean;
   isTextArea?: boolean;

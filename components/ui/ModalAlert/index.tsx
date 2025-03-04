@@ -63,9 +63,9 @@ export const ModalAlert = () => {
 
   return (
     <Modal animationType="slide" transparent={true} visible={isVisible}>
-      <View style={twrnc`w-full absolute h-full bg-gray-800 opacity-50`} />
+      <View style={twrnc`w-full absolute h-full bg-slate-800 opacity-50`} />
       <View
-        style={twrnc`w-[75%] bg-white rounded-xl p-4 self-center flex items-center justify-center flex-col space-y-4 my-auto`}
+        style={twrnc`w-[75%] bg-white rounded-xl p-4 self-center flex items-center justify-center flex-col my-auto`}
       >
         <View style={twrnc`mb-4 mt-2`}>{mappingIcons[variant]}</View>
         <View>

@@ -1,4 +1,4 @@
-import { Priority, Status } from "@/enums/priority";
+import { Priority } from "@/enums/priority";
 import { axiosInstance } from "@/services/axiosInstance";
 import { BaseResponseErrorInterface, BaseResponseInterface } from "@/types/base-response";
 import { taskCreateSchema } from "@/yup-schemas/task-create";
@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
 import * as yup from "yup";
 import { ProjectResponseInterface } from "./useGetProject";
 import { CategoryResponseInterface } from "./useGetCategory";
+import { Status } from "@/enums/status";
 
 interface CreateTaskResponseInterface
   extends BaseResponseInterface<{

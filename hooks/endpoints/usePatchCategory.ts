@@ -6,14 +6,14 @@ import { AxiosError } from "axios";
 interface PatchCategoryResponseInterface extends BaseResponseInterface<{ id: string; name: string }> {}
 
 interface PatchCategoryPayloadInterface {
-  project_id: string;
+  category_id: string;
   name: string;
 }
 
 export const patchCategory = async (
   payload: PatchCategoryPayloadInterface,
 ): Promise<PatchCategoryResponseInterface> => {
-  const { data } = await axiosInstance.patch(`/v1/category/${payload.project_id}`, {
+  const { data } = await axiosInstance.patch(`/v1/category/${payload.category_id}`, {
     name: payload.name,
   });
 

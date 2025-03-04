@@ -19,8 +19,10 @@ export interface InputSelectBaseInterface {
   searchPlaceholder?: string;
   saveButtonLabel?: string;
   cancelButtonLabel?: string;
-  isSearchable?: boolean;
   isRequired?: boolean;
+  onPressAdd?: (value: string) => void;
+  onPressUpdate?: (data: InputSelectData) => void;
+  onPressRemove?: (data: InputSelectData) => void;
 }
 export type InputSelectInterface = InputSelectSingleInterface | InputSelectMultipleInterface;
 

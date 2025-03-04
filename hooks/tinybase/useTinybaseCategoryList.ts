@@ -29,7 +29,10 @@ export const useTinybaseCategoryList = () => {
   }, [dataCategory]);
 
   return {
-    data: Object.values(data),
+    data: Object.values(data).map((item) => ({
+      name: String(item.name),
+      id: String(item.category_id),
+    })),
     isLoading,
     ...rest,
   };

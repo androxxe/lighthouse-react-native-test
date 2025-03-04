@@ -16,17 +16,16 @@ import { useUserStore } from "@/stores/useUserStore";
 import { useGetValidateToken } from "@/hooks/endpoints/useGetValidateToken";
 import { ModalConfirmation } from "@/components/ui/ModalConfirmation";
 import { ModalAlert } from "@/components/ui/ModalAlert";
-import { sleep } from "@/utils";
 import { BottomSheetCreateTask } from "@/components/BottomSheetCreateTask";
 import { createMergeableStore, Store } from "tinybase";
 import { createExpoSqlitePersister } from "tinybase/persisters/persister-expo-sqlite";
 import { Provider, useCreateMergeableStore, useCreatePersister } from "tinybase/ui-react";
 import * as SQLite from "expo-sqlite";
+import { BottomSheetCreateTaskProvider } from "@/hooks/states/useBottomSheetCreateTaskStore";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export const queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
 const useAndStartPersister = (store: Store) =>
   useCreatePersister(
@@ -65,34 +64,36 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <GestureHandlerRootView style={twrnc`flex-1`}>
-          <QueryClientProvider client={queryClient}>
-            <BottomSheetModalProvider>
-              <AuthProvider>
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                  }}
-                >
-                  <Stack.Screen
-                    name="task/create"
-                    options={{
-                      headerShown: true,
-                      title: "Create Task",
+      <BottomSheetCreateTaskProvider>
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <GestureHandlerRootView style={twrnc`flex-1`}>
+            <QueryClientProvider client={queryClient}>
+              <BottomSheetModalProvider>
+                <AuthProvider>
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
                     }}
-                  />
-                </Stack>
-                <StatusBar style="auto" />
-              </AuthProvider>
-              <BottomSheetCreateTask />
-              <ModalConfirmation />
-              <ModalAlert />
-              <Toast />
-            </BottomSheetModalProvider>
-          </QueryClientProvider>
-        </GestureHandlerRootView>
-      </ThemeProvider>
+                  >
+                    <Stack.Screen
+                      name="task/create"
+                      options={{
+                        headerShown: true,
+                        title: "Create Task",
+                      }}
+                    />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </AuthProvider>
+                <BottomSheetCreateTask />
+                <ModalConfirmation />
+                <ModalAlert />
+                <Toast />
+              </BottomSheetModalProvider>
+            </QueryClientProvider>
+          </GestureHandlerRootView>
+        </ThemeProvider>
+      </BottomSheetCreateTaskProvider>
     </Provider>
   );
 }
@@ -102,9 +103,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { mutate: validateToken } = useGetValidateToken({
     onSuccess: async () => {
+      await SplashScreen.hideAsync();
       router.replace("/(home)/today");
-      await sleep(1000);
-      SplashScreen.hideAsync();
     },
     onError: () => {
       SplashScreen.hideAsync();

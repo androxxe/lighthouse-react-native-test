@@ -5,8 +5,8 @@ export enum Priority {
   High = "High",
 }
 
-export enum Status {
-  Created = "Created",
-  InProgress = "InProgress",
-  Completed = "Completed",
-}
+export const PriorityColorMapper: Record<Priority, string> = {
+  Low: "green-500",
+  Medium: "yellow-500",
+  High: "red-500",
+};

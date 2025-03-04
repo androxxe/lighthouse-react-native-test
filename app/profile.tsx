@@ -22,6 +22,7 @@ export default function ProfileScreen() {
       onConfirm: () => {
         reset();
         router.replace("/");
+        closeModalConfirmation();
       },
       onCancel: closeModalConfirmation,
     });

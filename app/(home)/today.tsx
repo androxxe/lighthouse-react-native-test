@@ -2,14 +2,14 @@ import { Header } from "@/components/Header";
 import { ListTask } from "@/components/ListTask";
 import { ThemedView } from "@/components/ThemedView";
 import { Button } from "@/components/ui/Button";
-import { useBottomSheetCreateTask } from "@/hooks/states/useBottomSheetCreateTask";
+import { useBottomSheetCreateTaskContext } from "@/hooks/states/useBottomSheetCreateTaskStore";
 import { Feather } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import twrnc from "twrnc";
 
 export default function HomeScreen() {
-  const { setIsVisible } = useBottomSheetCreateTask();
+  const { setIsVisible } = useBottomSheetCreateTaskContext();
 
   return (
     <SafeAreaView style={twrnc`flex-1`}>

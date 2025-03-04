@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
-import { useGetProject } from "../endpoints/useGetProject";
-import { useGetCategory } from "../endpoints/useGetCategory";
 import { usePostTask } from "../endpoints/usePostTask";
 import { router } from "expo-router";
+import { useTinybaseCategoryList } from "../tinybase/useTinybaseCategoryList";
+import { useTinybaseProjectList } from "../tinybase/useTinybaseProjectList";
 
 export const useCreateTask = () => {
-  const project = useGetProject();
-
-  const category = useGetCategory();
+  const project = useTinybaseProjectList();
+  const category = useTinybaseCategoryList();
 
   const task = usePostTask({
     onSuccess: (data) => {

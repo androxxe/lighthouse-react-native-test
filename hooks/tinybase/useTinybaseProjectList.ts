@@ -29,7 +29,10 @@ export const useTinybaseProjectList = () => {
   }, [dataProject]);
 
   return {
-    data: Object.values(data),
+    data: Object.values(data).map((item) => ({
+      name: String(item.name),
+      id: String(item.project_id),
+    })),
     isLoading,
     ...rest,
   };

@@ -68,7 +68,7 @@ export default function CreateTaskScreen() {
               isMultiple={false}
               value={formik.values.project_id ?? ""}
               data={
-                project?.data?.data.map((item) => ({
+                project?.data.map((item) => ({
                   label: item.name,
                   value: item.id,
                 })) ?? []
@@ -99,7 +99,7 @@ export default function CreateTaskScreen() {
                   formik.values.category_ids?.filter((data) => data !== item.value),
                 );
               }}
-              data={category?.data?.data.map((item) => ({ label: item.name, value: item.id })) ?? []}
+              data={category?.data.map((item) => ({ label: item.name, value: item.id })) ?? []}
             />
           </ThemedView>
         </ScrollView>

@@ -72,7 +72,7 @@ const InputDatePickerBase = (props: InputDatePickerInterface & { sheetRef: RefOb
           <ThemedText fontWeight="bold" variant="large">
             {label}
           </ThemedText>
-          <View style={twrnc`flex flex-row items-center space-x-3`}>
+          <View style={twrnc`flex flex-row items-center`}>
             <TouchableOpacity
               onPress={() => {
                 setOpenedMonthCalendar(dayjs(openedMonthCalendar).subtract(1, "year").toDate());
@@ -80,7 +80,7 @@ const InputDatePickerBase = (props: InputDatePickerInterface & { sheetRef: RefOb
             >
               <Feather name="chevron-left" size={widthByScale(6)} color={twrnc.color("purple-500")} />
             </TouchableOpacity>
-            <ThemedText variant="small" style={twrnc`text-gray-500`}>
+            <ThemedText variant="small" style={twrnc`text-slate-500`}>
               {dayjs(openedMonthCalendar).format("YYYY")}
             </ThemedText>
             <TouchableOpacity
@@ -165,7 +165,7 @@ const InputDatePickerRegular = (props: InputDatePickerInterface) => {
   return (
     <View style={[twrnc`relative`, containerStyle]}>
       {label && (
-        <ThemedText variant="small" style={twrnc`mb-1.5`}>
+        <ThemedText variant="medium" style={twrnc`mb-1.5`}>
           {label}
         </ThemedText>
       )}
@@ -173,9 +173,9 @@ const InputDatePickerRegular = (props: InputDatePickerInterface) => {
         activeOpacity={0.7}
         style={twrnc`${cn(
           "py-1 flex flex-row text-sm border rounded-lg",
-          error ? "border-red-500" : "border-gray-400",
-          isDisabled ? "bg-gray-200" : "bg-white",
-          isDisabled ? "text-gray-400" : "text-gray-700",
+          error ? "border-red-500" : "border-slate-300",
+          isDisabled ? "bg-slate-200" : "bg-white",
+          isDisabled ? "text-slate-400" : "text-slate-700",
         )}`}
         onPress={openModal}
       >
@@ -191,13 +191,12 @@ const InputDatePickerRegular = (props: InputDatePickerInterface) => {
             },
             twrnc`py-2 px-3 flex-1`,
           ]}
-          color="text"
         >
           {value ? (dayjs(value).format(displayFormat) as string) : placeholder}
         </ThemedText>
         {onDelete && value && (
           <TouchableOpacity style={twrnc`pr-3 flex items-center justify-center`} onPress={onDelete}>
-            <AntDesign name="close" color={colors.gray[400]} size={widthByScale(4)} />
+            <AntDesign name="close" color={colors.slate[400]} size={widthByScale(4)} />
           </TouchableOpacity>
         )}
         {suffixIcon ? (
@@ -209,7 +208,7 @@ const InputDatePickerRegular = (props: InputDatePickerInterface) => {
             <Feather
               name="calendar"
               size={widthByScale(4)}
-              color={error ? twrnc.color("red-500") : twrnc.color("slate-500")}
+              color={error ? twrnc.color("red-500") : twrnc.color("slate-300")}
             />
           </TouchableOpacity>
         )}
