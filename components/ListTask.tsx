@@ -9,14 +9,29 @@ import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { BadgePriority } from "./ui/BadgePriority";
 import { useBottomSheetFormTaskContext } from "@/hooks/stores/useBottomSheetFormTaskStore";
+import { InputCheckboxData } from "./ui/InputCheckbox/index.type";
+import { BadgeStatus } from "./ui/BadgeStatus";
 
-export const ListTask = ({ task }: { task: TaskInterface }) => {
+export const ListTask = ({
+  task,
+  checked,
+  onCheckboxChange,
+}: {
+  task: TaskInterface;
+  checked: boolean;
+  onCheckboxChange: (value: InputCheckboxData[]) => void;
+}) => {
   const { setIsVisible, setEditValue } = useBottomSheetFormTaskContext();
 
   return (
     <TouchableOpacity style={twrnc`bg-white px-4 py-2 flex flex-row items-center`} activeOpacity={0.8}>
-      <ThemedView style={twrnc`w-`}>
-        <InputCheckbox variant="regular" value={[]} data={[{ label: "", value: 1 }]} onChange={() => undefined} />
+      <ThemedView>
+        <InputCheckbox
+          variant="regular"
+          value={checked ? [task.id] : []}
+          data={[{ label: "", value: task.id }]}
+          onChange={onCheckboxChange}
+        />
       </ThemedView>
       <ThemedView style={twrnc`flex-1`}>
         <ThemedText variant="large" fontWeight="bold">
@@ -31,6 +46,7 @@ export const ListTask = ({ task }: { task: TaskInterface }) => {
             </ThemedText>
           )}
           {task.priority && <BadgePriority priority={task.priority} />}
+          <BadgeStatus status={task.status} />
         </ThemedView>
       </ThemedView>
       <TouchableOpacity

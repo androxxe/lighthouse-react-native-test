@@ -27,7 +27,7 @@ interface PatchTaskResponseInterface
     task_categories: CategoryResponseInterface["data"];
   }> {}
 
-type PatchTaskPayload = Partial<yup.InferType<typeof taskCreateSchema>> & { task_id: string };
+type PatchTaskPayload = Partial<yup.InferType<typeof taskCreateSchema>> & { task_id: string; status?: Status };
 
 export const patchTask = async (payload: PatchTaskPayload): Promise<PatchTaskResponseInterface> => {
   const { data } = await axiosInstance.patch(`/v1/task/${payload.task_id}`, payload);

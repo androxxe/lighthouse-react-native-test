@@ -17,7 +17,7 @@ export interface TaskInterface {
   description: string;
   due_date: string;
   priority: Priority;
-  status?: Status;
+  status: Status;
   created_at: string;
   updated_at: string;
   user: {

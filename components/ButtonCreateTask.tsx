@@ -8,7 +8,7 @@ export const ButtonCreateTask = () => {
   const { setIsVisible, setEditValue } = useBottomSheetFormTaskContext();
 
   return (
-    <View style={twrnc`p-4 flex items-end`}>
+    <View style={twrnc`flex items-end`}>
       <Button
         borderColor={twrnc.color("purple-500")}
         backgroundColor={twrnc.color("purple-500")}

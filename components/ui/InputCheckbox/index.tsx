@@ -34,37 +34,34 @@ const InputCheckboxRegular = (props: InputCheckboxInterface) => {
 
   const [selectedValue, setSelectedValue] = useState<InputCheckboxData[] | undefined>(undefined);
 
-  const handleChange = useCallback((item: InputCheckboxData) => {
-    setSelectedValue((prev) => {
-      if (prev) {
-        let newData = [...prev];
+  const handleChange = useCallback(
+    (item: InputCheckboxData) => {
+      const _selectedValue = () => {
+        if (selectedValue) {
+          let newData = [...selectedValue];
 
-        if (newData.find((data) => data.value === item.value)) {
-          newData = newData.filter((data) => data.value !== item.value);
-        } else {
-          newData.push(item);
+          if (newData.find((data) => data.value === item.value)) {
+            newData = newData.filter((data) => data.value !== item.value);
+          } else {
+            newData.push(item);
+          }
+
+          return newData;
         }
 
-        return newData;
-      }
+        return [item];
+      };
 
-      return [item];
-    });
-  }, []);
-
-  useEffect(() => {
-    if (selectedValue) {
-      onChange(selectedValue);
-    }
-  }, [onChange, selectedValue]);
+      setSelectedValue(_selectedValue());
+      onChange(_selectedValue());
+    },
+    [selectedValue, onChange],
+  );
 
   useEffect(() => {
     if (value && value?.length > 0) {
-      setSelectedValue(
-        data.filter((item) => {
-          return value.includes(item.value);
-        }),
-      );
+      const filteredData = data.filter((item) => value.includes(item.value));
+      setSelectedValue(filteredData);
     }
   }, [value, data]);
 
