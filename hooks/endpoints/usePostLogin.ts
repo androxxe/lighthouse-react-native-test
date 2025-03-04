@@ -1,5 +1,5 @@
 import { axiosInstance } from "@/services/axiosInstance";
-import { UserInterface } from "@/stores/useUserStore";
+import { UserInterface } from "@/hooks/stores/useUserStore";
 import { BaseResponseErrorInterface, BaseResponseInterface } from "@/types/base-response";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";

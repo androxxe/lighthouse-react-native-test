@@ -4,7 +4,7 @@ import { Button } from "../Button";
 import { FontAwesome5 } from "@expo/vector-icons";
 import React from "react";
 import { BaseVariant } from "@/types/base-variant";
-import { useModalAlertStore } from "@/hooks/states/useModalAlertStore";
+import { useModalAlertStore } from "@/hooks/stores/useModalAlertStore";
 import twrnc from "twrnc";
 
 export const ModalAlert = () => {

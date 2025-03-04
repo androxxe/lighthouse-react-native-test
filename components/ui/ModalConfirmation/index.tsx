@@ -1,7 +1,7 @@
 import { Modal, View } from "react-native";
 import { Button } from "../Button";
 import { ThemedText } from "../ThemedText/index";
-import { useModalConfirmationStore } from "@/hooks/states/useModalConfirmationStore";
+import { useModalConfirmationStore } from "@/hooks/stores/useModalConfirmationStore";
 import twrnc from "twrnc";
 
 export const ModalConfirmation = () => {

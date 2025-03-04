@@ -4,8 +4,12 @@ import { ThemedText } from "./ui/ThemedText";
 import twrnc from "twrnc";
 import { TouchableOpacity } from "react-native";
 import { InputCheckbox } from "./ui/InputCheckbox";
+import { TaskInterface } from "@/types/task";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
+import { BadgePriority } from "./ui/BadgePriority";
 
-export const ListTask = () => {
+export const ListTask = ({ task }: { task: TaskInterface }) => {
   return (
     <TouchableOpacity style={twrnc`bg-white px-4 py-2 flex flex-row items-center`} activeOpacity={0.8}>
       <ThemedView style={twrnc`w-`}>
@@ -13,16 +17,22 @@ export const ListTask = () => {
       </ThemedView>
       <ThemedView style={twrnc`flex-1`}>
         <ThemedText variant="large" fontWeight="bold">
-          Do a weekly review of my tasks
+          {task.name}
         </ThemedText>
-        <ThemedText variant="medium">Do a weekly review of my tasks Do a weekly review of my tasks</ThemedText>
+        <ThemedText variant="medium">{task.description}</ThemedText>
         <ThemedView style={twrnc`flex-row items-center gap-x-2 mt-1`}>
           <Feather name="calendar" color={twrnc.color("purple-500")} size={16} />
-          <ThemedText variant="small" fontWeight="bold">
-            20 Februari
-          </ThemedText>
+          {task.due_date && (
+            <ThemedText variant="small" fontWeight="bold">
+              {dayjs(task.due_date).locale("id").format("DD MMM YYYY")}
+            </ThemedText>
+          )}
+          {task.priority && <BadgePriority priority={task.priority} />}
         </ThemedView>
       </ThemedView>
+      <TouchableOpacity>
+        <Feather name="edit" color={twrnc.color("purple-500")} size={16} />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 };

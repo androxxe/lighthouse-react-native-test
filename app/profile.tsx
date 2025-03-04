@@ -1,8 +1,8 @@
 import { ThemedView } from "@/components/ThemedView";
 import { Button } from "@/components/ui/Button";
 import { ThemedText } from "@/components/ui/ThemedText";
-import { useModalConfirmationStore } from "@/hooks/states/useModalConfirmationStore";
-import { useUserStore } from "@/stores/useUserStore";
+import { useModalConfirmationStore } from "@/hooks/stores/useModalConfirmationStore";
+import { useUserStore } from "@/hooks/stores/useUserStore";
 import { widthByScale } from "@/utils";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";

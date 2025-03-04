@@ -7,36 +7,28 @@ import React, { useEffect } from "react";
 import twrnc from "twrnc";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
-
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { useUserStore } from "@/stores/useUserStore";
+import { useUserStore } from "@/hooks/stores/useUserStore";
 import { useGetValidateToken } from "@/hooks/endpoints/useGetValidateToken";
 import { ModalConfirmation } from "@/components/ui/ModalConfirmation";
 import { ModalAlert } from "@/components/ui/ModalAlert";
 import { BottomSheetCreateTask } from "@/components/BottomSheetCreateTask";
-import { createMergeableStore, Store } from "tinybase";
-import { createExpoSqlitePersister } from "tinybase/persisters/persister-expo-sqlite";
-import { Provider, useCreateMergeableStore, useCreatePersister } from "tinybase/ui-react";
-import * as SQLite from "expo-sqlite";
-import { BottomSheetCreateTaskProvider } from "@/hooks/states/useBottomSheetCreateTaskStore";
+import { createMergeableStore } from "tinybase";
+import { Provider as TinyBaseProvider, useCreateMergeableStore } from "tinybase/ui-react";
+import { BottomSheetCreateTaskProvider } from "@/hooks/stores/useBottomSheetCreateTaskStore";
+import { useCreateClientPersisterAndStart } from "@/hooks/tinybase/persister/useCreateClientPersisterAndStart";
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
-const useAndStartPersister = (store: Store) =>
-  useCreatePersister(
-    store,
-    (store) => createExpoSqlitePersister(store, SQLite.openDatabaseSync("lighthouse-task-test.db")),
-    [],
-    (persister) =>
-      new Promise((resolve) => {
-        persister.load().then(() => persister.startAutoSave().then(() => resolve()));
-      }),
-  );
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -46,7 +38,6 @@ export default function RootLayout() {
   });
 
   const { token } = useUserStore();
-
   useEffect(() => {
     if (loaded) {
       if (!token) {
@@ -56,14 +47,14 @@ export default function RootLayout() {
   }, [loaded, token]);
 
   const store = useCreateMergeableStore(createMergeableStore);
-  useAndStartPersister(store);
+  useCreateClientPersisterAndStart(store);
 
   if (!loaded) {
     return null;
   }
 
   return (
-    <Provider store={store}>
+    <TinyBaseProvider store={store}>
       <BottomSheetCreateTaskProvider>
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
           <GestureHandlerRootView style={twrnc`flex-1`}>
@@ -74,15 +65,7 @@ export default function RootLayout() {
                     screenOptions={{
                       headerShown: false,
                     }}
-                  >
-                    <Stack.Screen
-                      name="task/create"
-                      options={{
-                        headerShown: true,
-                        title: "Create Task",
-                      }}
-                    />
-                  </Stack>
+                  ></Stack>
                   <StatusBar style="auto" />
                 </AuthProvider>
                 <BottomSheetCreateTask />
@@ -94,7 +77,7 @@ export default function RootLayout() {
           </GestureHandlerRootView>
         </ThemeProvider>
       </BottomSheetCreateTaskProvider>
-    </Provider>
+    </TinyBaseProvider>
   );
 }
 

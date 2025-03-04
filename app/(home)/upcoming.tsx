@@ -1,10 +1,13 @@
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ui/ThemedText";
+import { ButtonCreateTask } from "@/components/ButtonCreateTask";
+import { Header } from "@/components/Header";
+import { SafeAreaView } from "react-native-safe-area-context";
+import twrnc from "twrnc";
 
 export default function BrowseScreen() {
   return (
-    <ThemedView>
-      <ThemedText variant="large">Upcoming</ThemedText>
-    </ThemedView>
+    <SafeAreaView style={twrnc`flex-1`}>
+      <Header title="Upcoming" />
+      <ButtonCreateTask />
+    </SafeAreaView>
   );
 }

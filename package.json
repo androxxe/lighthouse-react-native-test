@@ -63,6 +63,8 @@
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
+    "reconnecting-websocket": "^4.4.0",
+    "socket.io-client": "^4.8.1",
     "tinybase": "^5.4.8",
     "twrnc": "^4.6.1",
     "yup": "^1.6.1",

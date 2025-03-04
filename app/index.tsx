@@ -11,7 +11,7 @@ import { router } from "expo-router";
 import { usePostLogin } from "@/hooks/endpoints/usePostLogin";
 import { useGetProfile } from "@/hooks/endpoints/useGetProfile";
 import { useEffect } from "react";
-import { useUserStore } from "@/stores/useUserStore";
+import { useUserStore } from "@/hooks/stores/useUserStore";
 import Toast from "react-native-toast-message";
 
 const loginSchema = yup.object({

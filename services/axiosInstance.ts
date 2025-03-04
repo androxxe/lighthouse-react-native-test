@@ -1,4 +1,4 @@
-import { useUserStore } from "@/stores/useUserStore";
+import { useUserStore } from "@/hooks/stores/useUserStore";
 import { config } from "../config";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 
