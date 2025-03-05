@@ -20,12 +20,10 @@ export const ListTask = ({
   task,
   checked,
   onCheckboxChange,
-  enableDelete,
 }: {
   task: TaskInterface;
   checked: boolean;
-  onCheckboxChange: (value: InputCheckboxData[]) => void;
-  enableDelete?: boolean;
+  onCheckboxChange?: (value: InputCheckboxData[]) => void;
 }) => {
   const { isConnected } = useNetInfo();
   const { setIsVisible, setEditValue } = useBottomSheetFormTaskContext();
@@ -51,12 +49,14 @@ export const ListTask = ({
   return (
     <TouchableOpacity style={twrnc`bg-white px-4 py-2 flex flex-row items-center`} activeOpacity={0.8}>
       <ThemedView>
-        <InputCheckbox
-          variant="regular"
-          value={checked ? [task.id] : []}
-          data={[{ label: "", value: task.id }]}
-          onChange={onCheckboxChange}
-        />
+        {onCheckboxChange ? (
+          <InputCheckbox
+            variant="regular"
+            value={checked ? [task.id] : []}
+            data={[{ label: "", value: task.id }]}
+            onChange={onCheckboxChange}
+          />
+        ) : null}
       </ThemedView>
       <ThemedView style={twrnc`flex-1`}>
         <ThemedText variant="large" fontWeight="bold">
@@ -93,32 +93,30 @@ export const ListTask = ({
       >
         <Feather name="edit" color={twrnc.color("purple-500")} size={16} />
       </TouchableOpacity>
-      {enableDelete && (
-        <TouchableOpacity
-          onPress={() => {
-            showModalConfirmation({
-              title: "Apakah anda yakin",
-              message: "Yakin menghapus task?",
-              onCancel: closeModalConfirmation,
-              onConfirm: () => {
-                if (!isConnected) {
-                  return Toast.show({
-                    text1: "Hanya bisa saat online",
-                    type: "error",
-                  });
-                }
-                deleteTask({
-                  task_id: task.id,
+      <TouchableOpacity
+        onPress={() => {
+          showModalConfirmation({
+            title: "Apakah anda yakin",
+            message: "Yakin menghapus task?",
+            onCancel: closeModalConfirmation,
+            onConfirm: () => {
+              if (!isConnected) {
+                return Toast.show({
+                  text1: "Hanya bisa saat online",
+                  type: "error",
                 });
-                closeModalConfirmation();
-              },
-            });
-          }}
-          style={twrnc`ml-3`}
-        >
-          <Feather name="trash" color={twrnc.color("red-500")} size={16} />
-        </TouchableOpacity>
-      )}
+              }
+              deleteTask({
+                task_id: task.id,
+              });
+              closeModalConfirmation();
+            },
+          });
+        }}
+        style={twrnc`ml-3`}
+      >
+        <Feather name="trash" color={twrnc.color("red-500")} size={16} />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 };

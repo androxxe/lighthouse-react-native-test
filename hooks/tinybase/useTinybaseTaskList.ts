@@ -17,6 +17,7 @@ import { usePatchTask } from "../endpoints/usePatchTask";
 import { randomString } from "@/utils";
 
 export const TASK_TABLE = "projects";
+export const TASK_CATEGORIES_TABLE = "projects_categories";
 
 export const TASK_TABLE_SCHEMAS: Record<string, keyof TaskTinybaseTableInterface> = {
   id: "id",

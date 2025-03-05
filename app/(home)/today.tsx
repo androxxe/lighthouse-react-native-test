@@ -1,7 +1,7 @@
 import { ButtonCreateTask } from "@/components/ButtonCreateTask";
+import { EmptyState } from "@/components/EmptyState";
 import { Header } from "@/components/Header";
 import { ListTask } from "@/components/ListTask";
-import { ThemedView } from "@/components/ThemedView";
 import { Button } from "@/components/ui/Button";
 import { InputCheckboxData } from "@/components/ui/InputCheckbox/index.type";
 import { Status } from "@/enums/status";
@@ -9,9 +9,8 @@ import { usePatchTask } from "@/hooks/endpoints/usePatchTask";
 import { useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
 import { useNetInfo } from "@react-native-community/netinfo";
 import dayjs from "dayjs";
-import { useCallback, useState } from "react";
-import { View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { useCallback, useMemo, useState } from "react";
+import { FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import twrnc from "twrnc";
@@ -52,24 +51,24 @@ export default function HomeScreen() {
     [checked],
   );
 
+  const list = useMemo(() => data.filter((item) => dayjs(item.due_date).isSame(dayjs(), "day")), [data]);
+
   return (
     <SafeAreaView style={twrnc`flex-1`}>
       <Header title="Today" />
-      <ScrollView>
-        <ThemedView style={twrnc`gap-y-4`}>
-          {data
-            .filter((item) => dayjs(item.due_date).isSame(dayjs(), "day"))
-            .map((task, index) => (
-              <ListTask
-                task={task}
-                key={index}
-                checked={!!checked.find((item) => item === task.id)}
-                onCheckboxChange={(data) => onCheckboxChange(task.id, data)}
-              />
-            ))}
-        </ThemedView>
-      </ScrollView>
-      <View style={twrnc`flex flex-row p-4 justify-between gap-x-2`}>
+      <FlatList
+        data={list}
+        renderItem={({ item }) => (
+          <ListTask
+            task={item}
+            checked={!!checked.find((data) => data === item.id)}
+            onCheckboxChange={(data) => onCheckboxChange(item.id, data)}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        ListEmptyComponent={<EmptyState />}
+      />
+      <View style={twrnc`flex flex-row p-4 justify-between gap-x-2 absolute bottom-0 right-0 w-full`}>
         {checked.length > 0 ? (
           <Button
             label="Mark as Done"
