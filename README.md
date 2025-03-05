@@ -2,6 +2,17 @@
 
 Andrio Sirait - Test for Sr. Software Engineer
 
+## Library 
+- socket.io
+- TinyBase
+- expo-sqlite
+
+## TODO for Improvement
+- Use TinyBase synchronizer, using full websocket
+- E2E Test
+- Jest test
+
+
 # Backend Live Demo
 
 - REST API: https://api-lighthouse.andriosirait.com
@@ -38,9 +49,3 @@ $ pnpm run lint
 
 Node.js >= 18.18.0
 yarn >= 1.22.19
-
-
-## TODO for Improvement
-
-- E2E Test
-- Jest test
