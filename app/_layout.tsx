@@ -22,6 +22,7 @@ import { BottomSheetFormTaskProvider } from "@/hooks/stores/useBottomSheetFormTa
 import { useCreateClientPersisterAndStart } from "@/hooks/tinybase/persister/useCreateClientPersisterAndStart";
 import { OfflineMode } from "@/components/ui/OfflineMode";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -101,6 +102,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onError: () => {
       SplashScreen.hideAsync();
     },
+  });
+
+  useTinybaseTaskList({
+    subscribe: true,
   });
 
   useEffect(() => {

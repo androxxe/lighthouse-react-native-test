@@ -79,6 +79,7 @@ export const MarkAsDone = ({
                   },
                   total_comment: 0,
                 };
+
                 return updateRowNotSync(payload);
               }),
             );

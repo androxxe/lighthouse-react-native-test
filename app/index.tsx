@@ -56,11 +56,11 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (isSuccess && user.data) {
-      setUser(user.data.user);
+      setUser(user.data);
       router.replace("/(home)/today");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, user?.data.user]);
+  }, [isSuccess, user?.data]);
 
   return (
     <SafeAreaView style={twrnc`flex-1`}>

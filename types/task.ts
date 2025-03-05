@@ -12,18 +12,12 @@ export interface TaskListBroadcastInterface {
   };
 }
 
-export interface TaskUpdateBroadcastInterface {
-  data: TaskInterface;
-}
+export interface TaskUpdateBroadcastInterface extends TaskInterface {}
 
-export interface TaskCreateBroadcastInterface {
-  data: TaskInterface;
-}
+export interface TaskCreateBroadcastInterface extends TaskInterface {}
 
 export interface TaskDeleteBroadcastInterface {
-  data: {
-    id: string;
-  };
+  id: string;
 }
 
 export interface TaskInterface {
@@ -68,6 +62,7 @@ export interface TaskTinybaseTableInterface {
   total_comment: number;
   is_sync: boolean;
   is_create: boolean;
+  task_categories: string;
 }
 
 export interface TaskCategoriesTableInterface {

@@ -37,10 +37,10 @@ export const ListTask = ({
         type: "success",
       });
     },
-    onError: (data) => {
+    onError: (error) => {
       Toast.show({
         text1: "Terjadi kesalahan",
-        text2: data.response?.data.message ?? "Internal Server Error",
+        text2: error.response?.data.message ?? "Internal Server Error",
         type: "error",
       });
     },
@@ -73,6 +73,16 @@ export const ListTask = ({
           {task.priority && <BadgePriority priority={task.priority} />}
           <BadgeStatus status={task.status} />
         </ThemedView>
+        {task.task_categories.length > 0 ? (
+          <ThemedView style={twrnc`flex-row items-center gap-x-2 mt-1`}>
+            <ThemedText variant="small">Kategori:</ThemedText>
+            {task.task_categories.map((task_categories, index) => (
+              <ThemedView key={index} style={twrnc`border border-slate-300 px-1 py-0.5 rounded-md`}>
+                <ThemedText variant="small">{task_categories.name}</ThemedText>
+              </ThemedView>
+            ))}
+          </ThemedView>
+        ) : null}
       </ThemedView>
       <TouchableOpacity
         onPress={() => {
@@ -106,6 +116,7 @@ export const ListTask = ({
                   type: "error",
                 });
               }
+
               deleteTask({
                 task_id: task.id,
               });

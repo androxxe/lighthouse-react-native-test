@@ -16,8 +16,8 @@ import dayjs from "dayjs";
 import { usePatchTask } from "../endpoints/usePatchTask";
 import { randomString } from "@/utils";
 
-export const TASK_TABLE = "projects";
-export const TASK_CATEGORIES_TABLE = "projects_categories";
+export const TASK_TABLE = "tasks";
+export const TASK_CATEGORIES_TABLE = "tasks_categories";
 
 export const TASK_TABLE_SCHEMAS: Record<string, keyof TaskTinybaseTableInterface> = {
   id: "id",
@@ -36,6 +36,7 @@ export const TASK_TABLE_SCHEMAS: Record<string, keyof TaskTinybaseTableInterface
   total_comment: "total_comment",
   is_sync: "is_sync",
   is_create: "is_create",
+  task_categories: "task_categories",
 };
 
 export interface CreateTaskOfflineInterface extends Omit<TaskInterface, "id" | "total_comment"> {}
@@ -58,35 +59,30 @@ interface TaskInterfaceWithSync extends TaskInterface {
   is_create: boolean;
 }
 
-export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
+export const useTinybaseTaskList = (props?: { subscribe?: boolean }): UseTinybaseTaskListResponse => {
   const { isConnected } = useNetInfo();
+  const { subscribe } = props ?? {};
 
   const { isLoading } = useTaskSocketIO({
+    subscribe,
     onTaskList: (data) => {
       deleteTable();
       data.data.forEach((project) => addRow(project));
     },
     onTaskCreate: (data) => {
-      addRow(data.data);
+      addRow(data);
     },
     onTaskUpdate: (data) => {
-      updateRow(data.data);
+      updateRow(data);
     },
     onTaskDelete: (data) => {
-      deleteRow(data.data);
+      deleteRow(data);
     },
   });
 
-  const { mutateAsync: postTask } = usePostTask({
-    onSuccess: (data) => {
-      addRow(data.data);
-    },
-  });
-  const { mutateAsync: patchTask } = usePatchTask({
-    onSuccess: (data) => {
-      updateRow(data.data);
-    },
-  });
+  const { mutateAsync: postTask } = usePostTask({});
+
+  const { mutateAsync: patchTask } = usePatchTask({});
 
   // TODO: Improvement pagination
   const rawData = useTable(TASK_TABLE);
@@ -112,6 +108,7 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
         [TASK_TABLE_SCHEMAS.total_comment]: data.total_comment,
         [TASK_TABLE_SCHEMAS.is_sync]: 1,
         [TASK_TABLE_SCHEMAS.is_create]: 1,
+        [TASK_TABLE_SCHEMAS.task_categories]: data.task_categories ? JSON.stringify(data?.task_categories) : "",
       };
     },
   );
@@ -134,6 +131,7 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
       [TASK_TABLE_SCHEMAS.total_comment]: 0,
       [TASK_TABLE_SCHEMAS.is_sync]: 0,
       [TASK_TABLE_SCHEMAS.is_create]: 1,
+      [TASK_TABLE_SCHEMAS.task_categories]: data.task_categories ? JSON.stringify(data?.task_categories) : "",
     };
   });
 
@@ -158,6 +156,7 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
         [TASK_TABLE_SCHEMAS.total_comment]: data.total_comment,
         [TASK_TABLE_SCHEMAS.is_sync]: 0,
         [TASK_TABLE_SCHEMAS.is_create]: 0,
+        [TASK_TABLE_SCHEMAS.task_categories]: data.task_categories ? JSON.stringify(data?.task_categories) : "",
       };
     },
   );
@@ -189,6 +188,7 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
         [TASK_TABLE_SCHEMAS.total_comment]: data.total_comment,
         [TASK_TABLE_SCHEMAS.is_sync]: 1,
         [TASK_TABLE_SCHEMAS.is_create]: 0,
+        [TASK_TABLE_SCHEMAS.task_categories]: data.task_categories ? JSON.stringify(data?.task_categories) : "",
       };
     },
   );
@@ -218,7 +218,9 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
                 name: String(item.project_name),
               }
             : null,
-        task_categories: [],
+        task_categories: item.task_categories
+          ? (JSON.parse(String(item.task_categories)) as unknown as TaskInterface["task_categories"])
+          : [],
         total_comment: Number(item.total_comment),
         is_sync: item.is_sync ? true : false,
         is_create: item.is_create ? true : false,
@@ -238,7 +240,7 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
             priority: item.priority,
             due_date: dayjs(item.due_date).toDate(),
             project_id: item.project?.id,
-            category_ids: [],
+            category_ids: item.task_categories,
           }).then(() => {
             deleteRow({ id: item.id });
           }),
@@ -247,24 +249,24 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, data]);
 
-  // sync if online
+  // // sync if online
   useEffect(() => {
     if (isConnected) {
       data
         .filter((item) => item.is_sync === false && item.is_create === false)
-        .forEach((item) =>
-          patchTask({
+        .forEach((item) => {
+          return patchTask({
             task_id: item.id,
             name: item.name,
             description: item.description,
             priority: item.priority,
             due_date: dayjs(item.due_date).toDate(),
             project_id: item.project?.id,
-            category_ids: [],
+            category_ids: item.task_categories,
           }).then(() => {
             deleteRow({ id: item.id });
-          }),
-        );
+          });
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, data]);

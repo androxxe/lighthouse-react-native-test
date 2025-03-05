@@ -28,7 +28,6 @@ export default function HomeScreen() {
     [checked],
   );
 
-  // const list = [];
   const list = useMemo(() => data.filter((item) => dayjs(item.due_date).isSame(dayjs(), "day")), [data]);
 
   return (

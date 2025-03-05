@@ -52,28 +52,28 @@ export default function RegisterScreen() {
           <InputText
             value={formik.values.name}
             onChangeText={(value) => formik.setFieldValue("name", value)}
-            error={formik.errors?.name}
+            error={formik.touched?.name && formik.errors?.name}
             label="Nama Lengkap"
             placeholder="Masukkan nama"
           />
           <InputText
             value={formik.values.email}
             onChangeText={(value) => formik.setFieldValue("email", value)}
-            error={formik.errors?.email}
+            error={formik.touched?.email && formik.errors?.email}
             label="Email"
             placeholder="Masukkan"
           />
           <InputText
             value={formik.values.password}
             onChangeText={(value) => formik.setFieldValue("password", value)}
-            error={formik.errors?.password}
+            error={formik.touched?.password && formik.errors?.password}
             label="Password"
             isSecureTextEntry
           />
           <InputText
             value={formik.values.password_confirmation}
             onChangeText={(value) => formik.setFieldValue("password_confirmation", value)}
-            error={formik.errors?.password_confirmation}
+            error={formik.touched?.password_confirmation && formik.errors?.password_confirmation}
             label="Konfirmasi Password"
             isSecureTextEntry
           />

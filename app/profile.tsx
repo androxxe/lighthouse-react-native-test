@@ -36,7 +36,12 @@ export default function ProfileScreen() {
         >
           <Feather name="user" size={widthByScale(12)} color={twrnc.color("purple-500")} />
         </View>
-        <ThemedText variant="large">{user?.name}</ThemedText>
+        <ThemedText variant="large" fontWeight="bold">
+          {user?.name}
+        </ThemedText>
+        <ThemedText variant="large" fontWeight="regular">
+          {user?.email}
+        </ThemedText>
       </ThemedView>
       <Button variant="secondary" label="Logout" onPress={onLogout} containerStyle={twrnc`w-full`} />
     </SafeAreaView>
