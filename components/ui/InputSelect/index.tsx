@@ -180,11 +180,11 @@ export const InputSelect = (props: InputSelectInterface) => {
     [data, isMultiple, value],
   );
 
-  // useEffect(() => {
-  //   if (value && isMultiple) {
-  //     setSelectedValues(data.filter((item) => (value as string[]).includes(String(item.value))));
-  //   }
-  // }, [value, data, isMultiple]);
+  useEffect(() => {
+    if (value && isMultiple) {
+      setSelectedValues(data.filter((item) => (value as string[]).includes(String(item.value))));
+    }
+  }, [value, data, isMultiple]);
 
   return (
     <View style={[twrnc`relative`, containerStyle]}>

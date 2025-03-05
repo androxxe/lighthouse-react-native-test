@@ -80,7 +80,7 @@ export const useTaskSocketIO = (props?: UseTaskSocketIOProps) => {
 
       socket.on(SOCKET_EVENT.EXCEPTION, (data: BaseSocketIOInterface<unknown>) => {
         Toast.show({
-          text1: "Terjadi kesalahan",
+          text1: "Terjadi kesalahan di socket.io",
           text2: data.message,
           type: "error",
         });
@@ -92,7 +92,7 @@ export const useTaskSocketIO = (props?: UseTaskSocketIOProps) => {
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [subscribe]);
 
   return {
     tasks,

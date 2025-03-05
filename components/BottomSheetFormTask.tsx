@@ -18,10 +18,11 @@ import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typesc
 import { InputPriority } from "./ui/InputPriority";
 import { useBottomSheetFormTaskContext } from "@/hooks/stores/useBottomSheetFormTaskStore";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { CreateTaskOfflineInterface, useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
 import { Status } from "@/enums/status";
 import { useUserStore } from "@/hooks/stores/useUserStore";
 import { TaskInterface } from "@/types/task";
+import { randomString } from "@/utils";
+import { useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
 
 export interface BottomSheetFormTaskRef {
   present: () => void;
@@ -71,10 +72,22 @@ export const BottomSheetFormTask = () => {
 
 const Form = () => {
   const { setIsVisible, editValue, setEditValue } = useBottomSheetFormTaskContext();
-
   const { isConnected } = useNetInfo();
 
   const { addRowNotSync, updateRowNotSync } = useTinybaseTaskList();
+
+  const {
+    project,
+    category,
+    taskCreate: { mutate: postTask, isPending: isPendingTaskCreate },
+    taskEdit: { mutate: patchTask, isPending: isPendingTaskEdit },
+    categoryCreate: { mutate: postCategory },
+    categoryPatch: { mutate: patchCategory },
+    categoryDelete: { mutate: deleteCategory },
+    projectCreate: { mutate: postProject },
+    projectPatch: { mutate: patchProject },
+    projectDelete: { mutate: deleteProject },
+  } = useFormTask();
 
   const formik = useFormik<yup.InferType<typeof taskCreateSchema>>({
     initialValues: {
@@ -98,54 +111,40 @@ const Form = () => {
           postTask(values);
         }
       } else {
+        const basePayload = {
+          name: values.name,
+          description: values.description,
+          priority: values.priority as Priority,
+          due_date: dayjs(values.due_date).toISOString(),
+          project:
+            values.project_id && values.project_name
+              ? {
+                  id: values.project_id,
+                  name: values.project_name,
+                }
+              : null,
+          status: Status.Created,
+          created_at: dayjs().toISOString(),
+          updated_at: dayjs().toISOString(),
+          task_categories: values.category_ids ?? [],
+          user: {
+            id: useUserStore.getState().user?.id ?? "",
+            email: useUserStore.getState().user?.email ?? "",
+            name: useUserStore.getState().user?.name ?? "",
+          },
+          total_comment: 0,
+        };
+
         if (editValue) {
           const payload: TaskInterface = {
             id: editValue.task_id,
-            name: values.name,
-            description: values.description,
-            priority: values.priority as Priority,
-            due_date: dayjs(values.due_date).toISOString(),
-            project:
-              values.project_id && values.project_name
-                ? {
-                    id: values.project_id,
-                    name: values.project_name,
-                  }
-                : null,
-            status: Status.Created,
-            created_at: dayjs().toISOString(),
-            updated_at: dayjs().toISOString(),
-            task_categories: [],
-            user: {
-              id: useUserStore.getState().user?.id ?? "",
-              email: useUserStore.getState().user?.email ?? "",
-              name: useUserStore.getState().user?.name ?? "",
-            },
-            total_comment: 0,
+            ...basePayload,
           };
           updateRowNotSync(payload);
         } else {
-          const payload: CreateTaskOfflineInterface = {
-            name: values.name,
-            description: values.description,
-            priority: values.priority as Priority,
-            due_date: dayjs(values.due_date).toISOString(),
-            project:
-              values.project_id && values.project_name
-                ? {
-                    id: values.project_id,
-                    name: values.project_name,
-                  }
-                : null,
-            status: Status.Created,
-            created_at: dayjs().toISOString(),
-            updated_at: dayjs().toISOString(),
-            task_categories: [],
-            user: {
-              id: useUserStore.getState().user?.id ?? "",
-              email: useUserStore.getState().user?.email ?? "",
-              name: useUserStore.getState().user?.name ?? "",
-            },
+          const payload: TaskInterface = {
+            id: randomString(10),
+            ...basePayload,
           };
           addRowNotSync(payload);
         }
@@ -161,19 +160,6 @@ const Form = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editValue]);
-
-  const {
-    project,
-    category,
-    taskCreate: { mutate: postTask, isPending: isPendingTaskCreate },
-    taskEdit: { mutate: patchTask, isPending: isPendingTaskEdit },
-    categoryCreate: { mutate: postCategory },
-    categoryPatch: { mutate: patchCategory },
-    categoryDelete: { mutate: deleteCategory },
-    projectCreate: { mutate: postProject },
-    projectPatch: { mutate: patchProject },
-    projectDelete: { mutate: deleteProject },
-  } = useFormTask();
 
   return (
     <>

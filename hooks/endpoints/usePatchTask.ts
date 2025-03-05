@@ -33,8 +33,15 @@ type PatchTaskPayload = Partial<yup.InferType<typeof taskCreateSchema>> & { task
 
 export const patchTask = async (payload: PatchTaskPayload): Promise<PatchTaskResponseInterface> => {
   const { data } = await axiosInstance.patch(`/v1/task/${payload.task_id}`, {
-    ...payload,
-    category_ids: payload.category_ids?.map((item) => item.id),
+    name: payload.name,
+    description: payload.description,
+    priority: payload.priority,
+    due_date: payload.due_date,
+    ...(payload.project_id && { project_id: payload.project_id }),
+    ...(payload.category_ids && payload.category_ids.length
+      ? { category_ids: payload.category_ids?.map((item) => item.id) }
+      : {}),
+    ...(payload.status && { status: payload.status }),
   });
 
   return data;

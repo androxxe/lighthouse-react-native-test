@@ -33,8 +33,14 @@ type CreateTaskPayload = yup.InferType<typeof taskCreateSchema>;
 
 export const postTask = async (payload: CreateTaskPayload): Promise<CreateTaskResponseInterface> => {
   const { data } = await axiosInstance.post("/v1/task", {
-    ...payload,
-    category_ids: payload.category_ids?.map((item) => item.id),
+    name: payload.name,
+    description: payload.description,
+    priority: payload.priority,
+    due_date: payload.due_date,
+    ...(payload.project_id && { project_id: payload.project_id }),
+    ...(payload.category_ids && payload.category_ids.length
+      ? { category_ids: payload.category_ids?.map((item) => item.id) }
+      : {}),
   });
 
   return data;

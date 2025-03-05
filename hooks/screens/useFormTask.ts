@@ -30,7 +30,7 @@ export const useFormTask = () => {
       });
       setIsVisible(false);
     },
-    onError: (error) => {
+    onError: (error, variables) => {
       Toast.show({
         text1: "Terjadi kesalahan",
         text2: error.response?.data?.message,

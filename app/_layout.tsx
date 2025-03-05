@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import twrnc from "twrnc";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
@@ -22,7 +22,7 @@ import { BottomSheetFormTaskProvider } from "@/hooks/stores/useBottomSheetFormTa
 import { useCreateClientPersisterAndStart } from "@/hooks/tinybase/persister/useCreateClientPersisterAndStart";
 import { OfflineMode } from "@/components/ui/OfflineMode";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
+import { useTinybaseTaskSyncronizer } from "@/hooks/tinybase/useTinybaseTaskSyncronizer";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -94,23 +94,29 @@ export default function RootLayout() {
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { token } = useUserStore();
 
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>();
+
   const { mutate: validateToken } = useGetValidateToken({
     onSuccess: async () => {
+      setIsAuthenticated(true);
       await SplashScreen.hideAsync();
       router.replace("/(home)/today");
     },
     onError: () => {
+      setIsAuthenticated(false);
       SplashScreen.hideAsync();
     },
   });
 
-  useTinybaseTaskList({
-    subscribe: true,
+  useTinybaseTaskSyncronizer({
+    subscribe: !!isAuthenticated,
   });
 
   useEffect(() => {
     if (token) {
       validateToken();
+    } else {
+      setIsAuthenticated(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);

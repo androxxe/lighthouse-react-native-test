@@ -9,8 +9,10 @@ Andrio Sirait - Test for Sr. Software Engineer
 
 ## TODO for Improvement
 - Use TinyBase synchronizer, using full websocket
+- Tinybase with Schemas to make sure typesafe sqlite
 - E2E Test
 - Jest test
+- Refresh Token
 
 
 # Backend Live Demo

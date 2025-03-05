@@ -5,11 +5,11 @@ import { TaskInterface } from "@/types/task";
 import dayjs from "dayjs";
 import { Priority } from "@/enums/priority";
 import { useUserStore } from "@/hooks/stores/useUserStore";
-import { useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
 import { usePatchTask } from "@/hooks/endpoints/usePatchTask";
 import Toast from "react-native-toast-message";
 import { Status } from "@/enums/status";
 import { View } from "react-native";
+import { useTinybaseTaskList } from "../hooks/tinybase/useTinybaseTaskList";
 
 export const MarkAsDone = ({
   list,
@@ -24,8 +24,8 @@ export const MarkAsDone = ({
 
   const { updateRowNotSync } = useTinybaseTaskList();
 
-  const { mutate: patchTask } = usePatchTask({
-    onSuccess: () => {
+  const { mutate: patchTask, isPending } = usePatchTask({
+    onSuccess: (data) => {
       Toast.show({
         text1: "Task done",
         type: "success",
@@ -44,49 +44,51 @@ export const MarkAsDone = ({
   if (checked.length === 0) return <View />;
 
   return (
-    <>
-      <Button
-        label="Mark as Done"
-        containerStyle={twrnc`flex-1`}
-        variant="secondary"
-        onPress={async () => {
-          if (!isConnected) {
-            await Promise.all(
-              checked.map((item) => {
-                const values = list.find((find) => find.id === item);
-                if (!values) return;
+    <Button
+      isLoading={isPending}
+      disabled={isPending}
+      label="Mark as Done"
+      containerStyle={twrnc`flex-1`}
+      variant="secondary"
+      onPress={async () => {
+        if (!isConnected) {
+          await Promise.all(
+            checked.map((item) => {
+              const values = list.find((data) => data.id === item);
+              if (!values) return;
 
-                const payload: TaskInterface = {
-                  id: item,
-                  name: values.name,
-                  description: values.description,
-                  priority: values.priority as Priority,
-                  due_date: dayjs(values.due_date).toISOString(),
-                  project: values.project
-                    ? {
-                        id: values.project.id,
-                        name: values.project.name,
-                      }
-                    : null,
-                  status: Status.Completed,
-                  created_at: values.created_at,
-                  updated_at: values.updated_at,
-                  task_categories: [],
-                  user: {
-                    id: useUserStore.getState().user?.id ?? "",
-                    email: useUserStore.getState().user?.email ?? "",
-                    name: useUserStore.getState().user?.name ?? "",
-                  },
-                  total_comment: 0,
-                };
+              const payload: TaskInterface = {
+                id: item,
+                name: values.name,
+                description: values.description,
+                priority: values.priority as Priority,
+                due_date: dayjs(values.due_date).toISOString(),
+                project: values.project
+                  ? {
+                      id: values.project.id,
+                      name: values.project.name,
+                    }
+                  : null,
+                status: Status.Completed,
+                created_at: values.created_at,
+                updated_at: values.updated_at,
+                task_categories: [],
+                user: {
+                  id: useUserStore.getState().user?.id ?? "",
+                  email: useUserStore.getState().user?.email ?? "",
+                  name: useUserStore.getState().user?.name ?? "",
+                },
+                total_comment: 0,
+              };
 
-                return updateRowNotSync(payload);
-              }),
-            );
-          }
+              updateRowNotSync(payload);
+              onSuccess();
+            }),
+          );
+        } else {
           checked.map((item) => patchTask({ task_id: item, status: Status.Completed }));
-        }}
-      />
-    </>
+        }
+      }}
+    />
   );
 };
