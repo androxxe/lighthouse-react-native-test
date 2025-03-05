@@ -79,7 +79,8 @@ export const useTaskSocketIO = (props?: UseTaskSocketIOProps) => {
     return () => {
       socket.disconnect();
     };
-  }, [onConnect, onDisconnect, onError, onTaskList, onTaskCreate, onTaskUpdate, onTaskDelete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     tasks,

@@ -5,14 +5,14 @@ import { Priority } from "@/enums/priority";
 import { taskCreateSchema } from "@/yup-schemas/task-create";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import * as yup from "yup";
 import twrnc from "twrnc";
 import { InputDatePicker } from "@/components/ui/InputDatePicker";
 import { InputSelect } from "@/components/ui/InputSelect";
 import { useFormTask } from "@/hooks/screens/useFormTask";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useBackHandlerBottomSheet } from "@/hooks/useBackHandlerBottomSheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import { InputPriority } from "./ui/InputPriority";
@@ -28,8 +28,49 @@ export interface BottomSheetFormTaskRef {
   close: () => void;
 }
 
-export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) => {
-  const { isVisible, setIsVisible, editValue, setEditValue } = useBottomSheetFormTaskContext();
+export const BottomSheetFormTask = () => {
+  const { isVisible, setIsVisible } = useBottomSheetFormTaskContext();
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const { onChange: onChangeSheet, isOpen } = useBackHandlerBottomSheet(bottomSheetModalRef);
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetDefaultBackdropProps) => (
+      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
+    ),
+    [],
+  );
+
+  useEffect(() => {
+    if (isVisible) {
+      bottomSheetModalRef.current?.present();
+    } else {
+      bottomSheetModalRef.current?.close();
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
+    setIsVisible(isOpen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  return (
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      onChange={onChangeSheet}
+      backdropComponent={renderBackdrop}
+      enableDynamicSizing={true}
+    >
+      <BottomSheetView style={twrnc`flex-1 bg-white`}>
+        <Form />
+      </BottomSheetView>
+    </BottomSheetModal>
+  );
+};
+
+const Form = () => {
+  const { setIsVisible, editValue, setEditValue } = useBottomSheetFormTaskContext();
 
   const { isConnected } = useNetInfo();
 
@@ -134,151 +175,110 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
     projectDelete: { mutate: deleteProject },
   } = useFormTask();
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  useImperativeHandle(ref, () => ({
-    present: () => bottomSheetModalRef.current?.present(),
-    close: () => bottomSheetModalRef.current?.close(),
-  }));
-
-  const { onChange: onChangeSheet, isOpen } = useBackHandlerBottomSheet(bottomSheetModalRef);
-
-  const renderBackdrop = useCallback(
-    (props: BottomSheetDefaultBackdropProps) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
-    ),
-    [],
-  );
-
-  useEffect(() => {
-    if (isVisible) {
-      bottomSheetModalRef.current?.present();
-    } else {
-      bottomSheetModalRef.current?.close();
-    }
-  }, [isVisible]);
-
-  useEffect(() => {
-    setIsVisible(isOpen);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
-
   return (
-    <BottomSheetModal
-      ref={bottomSheetModalRef}
-      onChange={onChangeSheet}
-      backdropComponent={renderBackdrop}
-      enableDynamicSizing={true}
-    >
-      <BottomSheetView style={twrnc`flex-1 bg-white`}>
-        <ThemedView style={twrnc`flex-1`}>
-          <ScrollView>
-            <ThemedView style={twrnc`p-4 gap-y-4`}>
-              <InputText
-                isRequired
-                label="Name"
-                value={formik.values.name}
-                onChangeText={(value) => formik.setFieldValue("name", value)}
-                placeholder="Enter task name"
-                error={formik.touched.name && formik.errors.name}
-              />
-              <InputText
-                isRequired
-                label="Description"
-                isTextArea
-                value={formik.values.description}
-                onChangeText={(value) => formik.setFieldValue("description", value)}
-                placeholder="Enter description"
-                error={formik.touched.description && formik.errors.description}
-              />
-              <View style={twrnc`flex-1 flex-row gap-x-4`}>
-                <InputPriority
-                  isRequired
-                  containerStyle={twrnc`flex-1`}
-                  label="Priority"
-                  value={formik.values.priority}
-                  onChange={(data) => formik.setFieldValue("priority", data.value)}
-                  placeholder="Select task priority"
-                  error={formik.touched.priority && formik.errors.priority}
-                />
-                <InputDatePicker
-                  containerStyle={twrnc`flex-1`}
-                  variant="regular"
-                  label="Due Date"
-                  value={formik.values.due_date}
-                  onChange={(value) => formik.setFieldValue("due_date", value)}
-                />
-              </View>
-              <InputSelect
-                containerStyle={twrnc`flex-1`}
-                variant="regular"
-                label="Category"
-                placeholder="Select category"
-                isMultiple
-                value={
-                  formik.values.category_ids && formik.values.category_ids?.length > 0
-                    ? formik.values.category_ids.map((item) => String(item))
-                    : []
-                }
-                onChange={(data) => {
-                  formik.setFieldValue(
-                    "category_ids",
-                    data.map((item) => ({
-                      id: item.value,
-                      name: item.label,
-                    })),
-                  );
-                }}
-                onDeleteSelection={(item) => {
-                  formik.setFieldValue(
-                    "category_ids",
-                    formik.values.category_ids?.filter((data) => data.id !== item.value),
-                  );
-                }}
-                data={category?.data?.map((item) => ({ label: item.name, value: item.id })) ?? []}
-                onPressAdd={(data) => postCategory({ name: data })}
-                onPressUpdate={(data) => patchCategory({ name: String(data.label), category_id: String(data.value) })}
-                onPressRemove={(data) => {
-                  deleteCategory({ category_id: String(data.value) });
-                }}
-              />
-              <InputSelect
-                containerStyle={twrnc`flex-1`}
-                variant="regular"
-                label="Project"
-                placeholder="Select project"
-                isMultiple={false}
-                value={formik.values.project_id ?? ""}
-                data={
-                  project?.data?.map((item) => ({
-                    label: item.name,
-                    value: item.id,
-                  })) ?? []
-                }
-                onChange={(data) => {
-                  formik.setFieldValue("project_id", data.value);
-                  formik.setFieldValue("project_name", data.label);
-                }}
-                onPressAdd={(data) => postProject({ name: data })}
-                onPressUpdate={(data) => patchProject({ name: String(data.label), project_id: String(data.value) })}
-                onPressRemove={(data) => {
-                  deleteProject({ project_id: String(data.value) });
-                }}
-              />
-            </ThemedView>
-          </ScrollView>
-        </ThemedView>
-        <ThemedView style={twrnc`p-4`}>
-          <Button
-            variant="background"
-            isLoading={isPendingTaskEdit || isPendingTaskCreate}
-            disabled={isPendingTaskEdit || isPendingTaskCreate}
-            label="Submit"
-            onPress={() => formik.handleSubmit()}
+    <>
+      <ThemedView style={twrnc`gap-y-4 p-4 flex-1`}>
+        <InputText
+          isRequired
+          label="Name"
+          value={formik.values.name}
+          onChangeText={(value) => formik.setFieldValue("name", value)}
+          placeholder="Enter task name"
+          error={formik.touched.name && formik.errors.name}
+        />
+        <InputText
+          isRequired
+          label="Description"
+          isTextArea
+          value={formik.values.description}
+          onChangeText={(value) => formik.setFieldValue("description", value)}
+          placeholder="Enter description"
+          error={formik.touched.description && formik.errors.description}
+        />
+        <View style={twrnc`flex-1 flex-row gap-x-4`}>
+          <InputPriority
+            isRequired
+            containerStyle={twrnc`flex-1`}
+            label="Priority"
+            value={formik.values.priority}
+            onChange={(data) => formik.setFieldValue("priority", data.value)}
+            placeholder="Select task priority"
+            error={formik.touched.priority && formik.errors.priority}
           />
-        </ThemedView>
-      </BottomSheetView>
-    </BottomSheetModal>
+          <InputDatePicker
+            containerStyle={twrnc`flex-1`}
+            variant="regular"
+            label="Due Date"
+            value={formik.values.due_date}
+            onChange={(value) => formik.setFieldValue("due_date", value)}
+          />
+        </View>
+        <InputSelect
+          containerStyle={twrnc`flex-1`}
+          variant="regular"
+          label="Category"
+          placeholder="Select category"
+          isMultiple
+          value={
+            formik.values.category_ids && formik.values.category_ids?.length > 0
+              ? formik.values.category_ids.map((item) => item.id)
+              : []
+          }
+          onChange={(data) => {
+            formik.setFieldValue(
+              "category_ids",
+              data.map((item) => ({
+                id: item.value,
+                name: item.label,
+              })),
+            );
+          }}
+          onDeleteSelection={(item) => {
+            formik.setFieldValue(
+              "category_ids",
+              formik.values.category_ids?.filter((data) => data.id !== item.value),
+            );
+          }}
+          data={category?.data?.map((item) => ({ label: item.name, value: item.id })) ?? []}
+          onPressAdd={(data) => postCategory({ name: data })}
+          onPressUpdate={(data) => patchCategory({ name: String(data.label), category_id: String(data.value) })}
+          onPressRemove={(data) => {
+            deleteCategory({ category_id: String(data.value) });
+          }}
+        />
+        <InputSelect
+          containerStyle={twrnc`flex-1`}
+          variant="regular"
+          label="Project"
+          placeholder="Select project"
+          isMultiple={false}
+          value={formik.values.project_id ?? ""}
+          data={
+            project?.data?.map((item) => ({
+              label: item.name,
+              value: item.id,
+            })) ?? []
+          }
+          onChange={(data) => {
+            formik.setFieldValue("project_id", data.value);
+            formik.setFieldValue("project_name", data.label);
+          }}
+          onPressAdd={(data) => postProject({ name: data })}
+          onPressUpdate={(data) => patchProject({ name: String(data.label), project_id: String(data.value) })}
+          onPressRemove={(data) => {
+            deleteProject({ project_id: String(data.value) });
+          }}
+        />
+      </ThemedView>
+      <ThemedView style={twrnc`p-4`}>
+        <Button
+          variant="background"
+          isLoading={isPendingTaskEdit || isPendingTaskCreate}
+          disabled={isPendingTaskEdit || isPendingTaskCreate}
+          label="Submit"
+          onPress={() => formik.handleSubmit()}
+        />
+      </ThemedView>
+    </>
   );
-});
-
-BottomSheetFormTask.displayName = "BottomSheetFormTask";
+};
