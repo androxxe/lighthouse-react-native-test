@@ -10,10 +10,9 @@ Andrio Sirait - Test for Sr. Software Engineer
 ## TODO for Improvement
 - Use TinyBase synchronizer, using full websocket
 - Tinybase with Schemas to make sure typesafe sqlite
-- E2E Test
+- E2E Test with Detox
 - Jest test
 - Refresh Token
-
 
 # Backend Live Demo
 
@@ -51,3 +50,6 @@ $ pnpm run lint
 
 Node.js >= 18.18.0
 yarn >= 1.22.19
+
+### Limitation
+- Cant create/edit/delete master Project & Categories when offline
