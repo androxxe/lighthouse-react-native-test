@@ -50,6 +50,7 @@ interface UseTinybaseTaskListResponse {
   data: TaskInterface[];
   isLoading: boolean;
   addRowNotSync: (data: CreateTaskOfflineInterface) => void;
+  updateRowNotSync: (data: TaskInterface) => void;
 }
 
 interface TaskInterfaceWithSync extends TaskInterface {
@@ -135,6 +136,31 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
       [TASK_TABLE_SCHEMAS.is_create]: 1,
     };
   });
+
+  const updateRowNotSync = useSetRowCallback<TaskInterface>(
+    TASK_TABLE,
+    (data) => data.id,
+    (data) => {
+      return {
+        [TASK_TABLE_SCHEMAS.id]: data.id,
+        [TASK_TABLE_SCHEMAS.name]: data.name,
+        [TASK_TABLE_SCHEMAS.description]: data.description,
+        [TASK_TABLE_SCHEMAS.due_date]: data.due_date,
+        [TASK_TABLE_SCHEMAS.priority]: data.priority,
+        [TASK_TABLE_SCHEMAS.status]: data.status,
+        [TASK_TABLE_SCHEMAS.created_at]: data.created_at,
+        [TASK_TABLE_SCHEMAS.updated_at]: data.updated_at,
+        [TASK_TABLE_SCHEMAS.user_id]: data.user.id,
+        [TASK_TABLE_SCHEMAS.user_name]: data.user.name,
+        [TASK_TABLE_SCHEMAS.user_email]: data.user.email,
+        [TASK_TABLE_SCHEMAS.project_id]: data.project?.id ?? "",
+        [TASK_TABLE_SCHEMAS.project_name]: data.project?.name ?? "",
+        [TASK_TABLE_SCHEMAS.total_comment]: data.total_comment,
+        [TASK_TABLE_SCHEMAS.is_sync]: 0,
+        [TASK_TABLE_SCHEMAS.is_create]: 0,
+      };
+    },
+  );
 
   const deleteRow = useDelRowCallback<{ id: string }>(TASK_TABLE, (data) => {
     return data.id;
@@ -246,6 +272,7 @@ export const useTinybaseTaskList = (): UseTinybaseTaskListResponse => {
   return {
     data,
     addRowNotSync,
+    updateRowNotSync,
     isLoading,
   };
 };

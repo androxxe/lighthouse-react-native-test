@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { usePostTask } from "../endpoints/usePostTask";
-import { router } from "expo-router";
 import { useTinybaseCategoryList } from "../tinybase/useTinybaseCategoryList";
 import { useTinybaseProjectList } from "../tinybase/useTinybaseProjectList";
 import { usePatchTask } from "../endpoints/usePatchTask";
@@ -29,8 +28,7 @@ export const useFormTask = () => {
         text2: `Successfully created ${data.data.name} task`,
         type: "success",
       });
-
-      router.back();
+      setIsVisible(false);
     },
     onError: (error) => {
       Toast.show({

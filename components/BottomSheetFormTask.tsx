@@ -21,6 +21,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { CreateTaskOfflineInterface, useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
 import { Status } from "@/enums/status";
 import { useUserStore } from "@/hooks/stores/useUserStore";
+import { TaskInterface } from "@/types/task";
 
 export interface BottomSheetFormTaskRef {
   present: () => void;
@@ -32,7 +33,7 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
 
   const { isConnected } = useNetInfo();
 
-  const { addRowNotSync } = useTinybaseTaskList();
+  const { addRowNotSync, updateRowNotSync } = useTinybaseTaskList();
 
   const formik = useFormik<yup.InferType<typeof taskCreateSchema>>({
     initialValues: {
@@ -56,29 +57,57 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
           postTask(values);
         }
       } else {
-        const payload: CreateTaskOfflineInterface = {
-          name: values.name,
-          description: values.description,
-          priority: values.priority as Priority,
-          due_date: dayjs(values.due_date).toISOString(),
-          project:
-            values.project_id && values.project_name
-              ? {
-                  id: values.project_id,
-                  name: values.project_name,
-                }
-              : null,
-          status: Status.Created,
-          created_at: dayjs().toISOString(),
-          updated_at: dayjs().toISOString(),
-          task_categories: [],
-          user: {
-            id: useUserStore.getState().user?.id ?? "",
-            email: useUserStore.getState().user?.email ?? "",
-            name: useUserStore.getState().user?.name ?? "",
-          },
-        };
-        addRowNotSync(payload);
+        if (editValue) {
+          const payload: TaskInterface = {
+            id: editValue.task_id,
+            name: values.name,
+            description: values.description,
+            priority: values.priority as Priority,
+            due_date: dayjs(values.due_date).toISOString(),
+            project:
+              values.project_id && values.project_name
+                ? {
+                    id: values.project_id,
+                    name: values.project_name,
+                  }
+                : null,
+            status: Status.Created,
+            created_at: dayjs().toISOString(),
+            updated_at: dayjs().toISOString(),
+            task_categories: [],
+            user: {
+              id: useUserStore.getState().user?.id ?? "",
+              email: useUserStore.getState().user?.email ?? "",
+              name: useUserStore.getState().user?.name ?? "",
+            },
+            total_comment: 0,
+          };
+          updateRowNotSync(payload);
+        } else {
+          const payload: CreateTaskOfflineInterface = {
+            name: values.name,
+            description: values.description,
+            priority: values.priority as Priority,
+            due_date: dayjs(values.due_date).toISOString(),
+            project:
+              values.project_id && values.project_name
+                ? {
+                    id: values.project_id,
+                    name: values.project_name,
+                  }
+                : null,
+            status: Status.Created,
+            created_at: dayjs().toISOString(),
+            updated_at: dayjs().toISOString(),
+            task_categories: [],
+            user: {
+              id: useUserStore.getState().user?.id ?? "",
+              email: useUserStore.getState().user?.email ?? "",
+              name: useUserStore.getState().user?.name ?? "",
+            },
+          };
+          addRowNotSync(payload);
+        }
         setIsVisible(false);
         setEditValue(undefined);
       }
