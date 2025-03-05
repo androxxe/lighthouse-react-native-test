@@ -2,6 +2,14 @@
 
 Andrio Sirait - Test for Sr. Software Engineer
 
+## Overview
+- Today task
+- Upcoming task
+- Browse task
+
+## Apps Demo
+https://drive.google.com/drive/folders/1UoQv4bzzkw1qrnrduU2YtP6goyEwJCXO?usp=sharing
+
 ## Library 
 - socket.io
 - TinyBase
