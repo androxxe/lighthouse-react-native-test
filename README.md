@@ -1,50 +1,46 @@
-# Welcome to your Expo app 👋
+## Build with React Native Expo
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Andrio Sirait - Test for Sr. Software Engineer
 
-## Get started
+# Backend Live Demo
 
-1. Install dependencies
+- REST API: https://api-lighthouse.andriosirait.com
+- socket.io https://socket-lighthouse.andriosirait.com
 
-   ```bash
-   npm install
-   ```
+# Repository
 
-2. Start the app
+- Front End: https://github.com/androxxe/lighthouse-react-native-test
+- Back End: https://github.com/androxxe/lighthouse-nestjs-test
 
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Installation
 
 ```bash
-npm run reset-project
+$ yarn install
+$ yarn android 
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+or
+```bash
+$ yarn install
+$ yarn ios
+```
 
-## Learn more
+## Testing
+Not implemented
 
-To learn more about developing your project with Expo, look at the following resources:
+## Linting
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+$ pnpm run lint
+```
 
-## Join the community
+## Requirements
 
-Join our community of developers creating universal apps.
+Node.js >= 18.18.0
+yarn >= 1.22.19
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## TODO for Improvement
+
+- E2E Test
+- Jest test

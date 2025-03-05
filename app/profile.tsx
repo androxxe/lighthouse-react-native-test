@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { ThemedText } from "@/components/ui/ThemedText";
 import { useModalConfirmationStore } from "@/hooks/stores/useModalConfirmationStore";
 import { useUserStore } from "@/hooks/stores/useUserStore";
-import { widthByScale } from "@/utils";
+import { sleep, widthByScale } from "@/utils";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { View } from "react-native";
@@ -19,8 +19,9 @@ export default function ProfileScreen() {
     showModalConfirmation({
       title: "Logout",
       message: "Apakah anda yakin ingin logout?",
-      onConfirm: () => {
+      onConfirm: async () => {
         reset();
+        await sleep(1000);
         router.replace("/");
         closeModalConfirmation();
       },
