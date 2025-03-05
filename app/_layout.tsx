@@ -21,6 +21,7 @@ import { Provider as TinyBaseProvider, useCreateMergeableStore } from "tinybase/
 import { BottomSheetFormTaskProvider } from "@/hooks/stores/useBottomSheetFormTaskStore";
 import { useCreateClientPersisterAndStart } from "@/hooks/tinybase/persister/useCreateClientPersisterAndStart";
 import { OfflineMode } from "@/components/ui/OfflineMode";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,14 +39,20 @@ export default function RootLayout() {
     SpaceMonoBold: require("../assets/fonts/SpaceMono-Bold.ttf"),
   });
 
+  const { isConnected } = useNetInfo();
   const { token } = useUserStore();
+
   useEffect(() => {
     if (loaded) {
       if (!token) {
         SplashScreen.hideAsync();
       }
+
+      if (token && !isConnected) {
+        SplashScreen.hideAsync().then(() => router.replace("/(home)/today"));
+      }
     }
-  }, [loaded, token]);
+  }, [loaded, token, isConnected]);
 
   const store = useCreateMergeableStore(createMergeableStore);
   useCreateClientPersisterAndStart(store);

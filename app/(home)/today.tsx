@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/Button";
 import { InputCheckboxData } from "@/components/ui/InputCheckbox/index.type";
 import { Status } from "@/enums/status";
 import { usePatchTask } from "@/hooks/endpoints/usePatchTask";
-import { useTaskSocketIO } from "@/hooks/screens/useTaskSocketIO";
+import { useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
+import { useNetInfo } from "@react-native-community/netinfo";
+import dayjs from "dayjs";
 import { useCallback, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -17,7 +19,9 @@ import twrnc from "twrnc";
 export default function HomeScreen() {
   const [checked, setChecked] = useState<string[]>([]);
 
-  const { tasks } = useTaskSocketIO();
+  const { isConnected } = useNetInfo();
+
+  const { data } = useTinybaseTaskList();
 
   const { mutate: patchTask } = usePatchTask({
     onSuccess: () => {
@@ -53,14 +57,16 @@ export default function HomeScreen() {
       <Header title="Today" />
       <ScrollView>
         <ThemedView style={twrnc`gap-y-4`}>
-          {tasks.map((task, index) => (
-            <ListTask
-              task={task}
-              key={index}
-              checked={!!checked.find((item) => item === task.id)}
-              onCheckboxChange={(data) => onCheckboxChange(task.id, data)}
-            />
-          ))}
+          {data
+            .filter((item) => dayjs(item.due_date).isSame(dayjs(), "day"))
+            .map((task, index) => (
+              <ListTask
+                task={task}
+                key={index}
+                checked={!!checked.find((item) => item === task.id)}
+                onCheckboxChange={(data) => onCheckboxChange(task.id, data)}
+              />
+            ))}
         </ThemedView>
       </ScrollView>
       <View style={twrnc`flex flex-row p-4 justify-between gap-x-2`}>
@@ -70,6 +76,13 @@ export default function HomeScreen() {
             containerStyle={twrnc`flex-1`}
             variant="secondary"
             onPress={() => {
+              if (!isConnected) {
+                return Toast.show({
+                  text1: "Hanya dapat diakses jika online",
+                  text2: "Anda tidak terhubung ke internet",
+                  type: "error",
+                });
+              }
               checked.map((item) => patchTask({ task_id: item, status: Status.Completed }));
             }}
           />

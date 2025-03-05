@@ -6,7 +6,7 @@ import twrnc from "twrnc";
 export const OfflineMode = () => {
   const { isConnected } = useNetInfo();
 
-  if (isConnected) return null;
+  if (isConnected || isConnected === null) return null;
 
   return (
     <ThemedView style={twrnc`bg-red-500 py-3 flex items-center justify-center`}>

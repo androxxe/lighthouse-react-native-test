@@ -18,6 +18,7 @@ interface CreateTaskResponseInterface
     priority: Priority;
     status: Status;
     created_at: string;
+    updated_at: string;
     user: {
       id: string;
       name: string;
@@ -25,12 +26,16 @@ interface CreateTaskResponseInterface
     };
     project: ProjectResponseInterface["data"][0] | null;
     task_categories: CategoryResponseInterface["data"];
+    total_comment: number;
   }> {}
 
 type CreateTaskPayload = yup.InferType<typeof taskCreateSchema>;
 
 export const postTask = async (payload: CreateTaskPayload): Promise<CreateTaskResponseInterface> => {
-  const { data } = await axiosInstance.post("/v1/task", payload);
+  const { data } = await axiosInstance.post("/v1/task", {
+    ...payload,
+    category_ids: payload.category_ids?.map((item) => item.id),
+  });
 
   return data;
 };

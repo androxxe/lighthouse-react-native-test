@@ -11,6 +11,21 @@ export interface TaskListBroadcastInterface {
     total_page: number;
   };
 }
+
+export interface TaskUpdateBroadcastInterface {
+  data: TaskInterface;
+}
+
+export interface TaskCreateBroadcastInterface {
+  data: TaskInterface;
+}
+
+export interface TaskDeleteBroadcastInterface {
+  data: {
+    id: string;
+  };
+}
+
 export interface TaskInterface {
   id: string;
   name: string;
@@ -34,4 +49,29 @@ export interface TaskInterface {
     name: string;
   }[];
   total_comment: number;
+}
+
+export interface TaskTinybaseTableInterface {
+  id: string;
+  name: string;
+  description: string;
+  due_date: string;
+  priority: Priority;
+  status: Status;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  project_id: string;
+  project_name: string;
+  total_comment: number;
+  is_sync: boolean;
+  is_create: boolean;
+}
+
+export interface TaskCategoriesTableInterface {
+  id: string;
+  task_id: string;
+  name: string;
 }

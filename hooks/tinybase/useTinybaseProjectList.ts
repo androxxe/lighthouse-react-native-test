@@ -11,12 +11,9 @@ export const useTinybaseProjectList = () => {
 
   const data = useTable(PROJECT_TABLE);
 
-  const addRow = useAddRowCallback<{ project_id: string; name: string }>(
-    PROJECT_TABLE,
-    ({ project_id, name }: { project_id: string; name: string }) => {
-      return { [ID_CELL]: project_id, [NAME_CELL]: name };
-    },
-  );
+  const addRow = useAddRowCallback(PROJECT_TABLE, (data: { project_id: string; name: string }) => {
+    return { [ID_CELL]: data.project_id, [NAME_CELL]: data.name };
+  });
 
   const deleteTable = useDelTableCallback<string>(PROJECT_TABLE);
 

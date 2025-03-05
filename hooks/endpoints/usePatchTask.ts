@@ -18,6 +18,7 @@ interface PatchTaskResponseInterface
     priority: Priority;
     status: Status;
     created_at: string;
+    updated_at: string;
     user: {
       id: string;
       name: string;
@@ -25,12 +26,16 @@ interface PatchTaskResponseInterface
     };
     project: ProjectResponseInterface["data"][0] | null;
     task_categories: CategoryResponseInterface["data"];
+    total_comment: number;
   }> {}
 
 type PatchTaskPayload = Partial<yup.InferType<typeof taskCreateSchema>> & { task_id: string; status?: Status };
 
 export const patchTask = async (payload: PatchTaskPayload): Promise<PatchTaskResponseInterface> => {
-  const { data } = await axiosInstance.patch(`/v1/task/${payload.task_id}`, payload);
+  const { data } = await axiosInstance.patch(`/v1/task/${payload.task_id}`, {
+    ...payload,
+    category_ids: payload.category_ids?.map((item) => item.id),
+  });
 
   return data;
 };

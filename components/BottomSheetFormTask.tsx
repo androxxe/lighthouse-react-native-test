@@ -17,16 +17,10 @@ import { useBackHandlerBottomSheet } from "@/hooks/useBackHandlerBottomSheet";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import { InputPriority } from "./ui/InputPriority";
 import { useBottomSheetFormTaskContext } from "@/hooks/stores/useBottomSheetFormTaskStore";
-import { usePostCategory } from "@/hooks/endpoints/usePostCategory";
-import { usePostProject } from "@/hooks/endpoints/usePostProject";
-import Toast from "react-native-toast-message";
-import { useQueryClient } from "@tanstack/react-query";
-import { PROJECT_LIST_QUERY_KEY } from "../hooks/endpoints/useGetProject";
-import { CATEGORY_LIST_QUERY_KEY } from "@/hooks/endpoints/useGetCategory";
-import { usePatchCategory } from "@/hooks/endpoints/usePatchCategory";
-import { useDeleteCategory } from "@/hooks/endpoints/useDeleteCategory";
-import { usePatchProject } from "@/hooks/endpoints/usePatchProject";
-import { useDeleteProject } from "@/hooks/endpoints/useDeleteProject";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { CreateTaskOfflineInterface, useTinybaseTaskList } from "@/hooks/tinybase/useTinybaseTaskList";
+import { Status } from "@/enums/status";
+import { useUserStore } from "@/hooks/stores/useUserStore";
 
 export interface BottomSheetFormTaskRef {
   present: () => void;
@@ -34,7 +28,11 @@ export interface BottomSheetFormTaskRef {
 }
 
 export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) => {
-  const { isVisible, setIsVisible, editValue } = useBottomSheetFormTaskContext();
+  const { isVisible, setIsVisible, editValue, setEditValue } = useBottomSheetFormTaskContext();
+
+  const { isConnected } = useNetInfo();
+
+  const { addRowNotSync } = useTinybaseTaskList();
 
   const formik = useFormik<yup.InferType<typeof taskCreateSchema>>({
     initialValues: {
@@ -43,17 +41,46 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
       priority: Priority.Low,
       due_date: dayjs().toDate(),
       project_id: "",
+      project_name: "",
       category_ids: [],
     },
     validationSchema: taskCreateSchema,
     onSubmit: (values) => {
-      if (editValue) {
-        taskEdit.mutate({
-          ...values,
-          task_id: editValue.task_id,
-        });
+      if (isConnected) {
+        if (editValue) {
+          patchTask({
+            ...values,
+            task_id: editValue.task_id,
+          });
+        } else {
+          postTask(values);
+        }
       } else {
-        task.mutate(values);
+        const payload: CreateTaskOfflineInterface = {
+          name: values.name,
+          description: values.description,
+          priority: values.priority as Priority,
+          due_date: dayjs(values.due_date).toISOString(),
+          project:
+            values.project_id && values.project_name
+              ? {
+                  id: values.project_id,
+                  name: values.project_name,
+                }
+              : null,
+          status: Status.Created,
+          created_at: dayjs().toISOString(),
+          updated_at: dayjs().toISOString(),
+          task_categories: [],
+          user: {
+            id: useUserStore.getState().user?.id ?? "",
+            email: useUserStore.getState().user?.email ?? "",
+            name: useUserStore.getState().user?.name ?? "",
+          },
+        };
+        addRowNotSync(payload);
+        setIsVisible(false);
+        setEditValue(undefined);
       }
     },
   });
@@ -65,99 +92,18 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editValue]);
 
-  const queryClient = useQueryClient();
-
-  const { project, category, task, taskEdit } = useFormTask();
-
-  const { mutate: postCategory } = usePostCategory({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: CATEGORY_LIST_QUERY_KEY,
-      });
-    },
-    onError: (error) => {
-      Toast.show({
-        text1: "Terjadi kesalahan",
-        text2: error.response?.data.message,
-        type: "error",
-      });
-    },
-  });
-
-  const { mutate: patchCategory } = usePatchCategory({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: CATEGORY_LIST_QUERY_KEY,
-      });
-    },
-    onError: (error) => {
-      Toast.show({
-        text1: "Terjadi kesalahan",
-        text2: error.response?.data.message,
-        type: "error",
-      });
-    },
-  });
-
-  const { mutate: deleteCategory } = useDeleteCategory({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: CATEGORY_LIST_QUERY_KEY,
-      });
-    },
-    onError: (error) => {
-      Toast.show({
-        text1: "Terjadi kesalahan",
-        text2: error.response?.data.message,
-        type: "error",
-      });
-    },
-  });
-
-  const { mutate: postProject } = usePostProject({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: PROJECT_LIST_QUERY_KEY,
-      });
-    },
-    onError: (error) => {
-      Toast.show({
-        text1: "Terjadi kesalahan",
-        text2: error.response?.data.message,
-        type: "error",
-      });
-    },
-  });
-
-  const { mutate: patchProject } = usePatchProject({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: PROJECT_LIST_QUERY_KEY,
-      });
-    },
-    onError: (error) => {
-      Toast.show({
-        text1: "Terjadi kesalahan",
-        text2: error.response?.data.message,
-        type: "error",
-      });
-    },
-  });
-
-  const { mutate: deleteProject } = useDeleteProject({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: PROJECT_LIST_QUERY_KEY,
-      });
-    },
-    onError: (error) => {
-      Toast.show({
-        text1: "Terjadi kesalahan",
-        text2: error.response?.data.message,
-        type: "error",
-      });
-    },
-  });
+  const {
+    project,
+    category,
+    taskCreate: { mutate: postTask, isPending: isPendingTaskCreate },
+    taskEdit: { mutate: patchTask, isPending: isPendingTaskEdit },
+    categoryCreate: { mutate: postCategory },
+    categoryPatch: { mutate: patchCategory },
+    categoryDelete: { mutate: deleteCategory },
+    projectCreate: { mutate: postProject },
+    projectPatch: { mutate: patchProject },
+    projectDelete: { mutate: deleteProject },
+  } = useFormTask();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   useImperativeHandle(ref, () => ({
@@ -247,13 +193,16 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
                 onChange={(data) => {
                   formik.setFieldValue(
                     "category_ids",
-                    data.map((item) => item.value),
+                    data.map((item) => ({
+                      id: item.value,
+                      name: item.label,
+                    })),
                   );
                 }}
                 onDeleteSelection={(item) => {
                   formik.setFieldValue(
                     "category_ids",
-                    formik.values.category_ids?.filter((data) => data !== item.value),
+                    formik.values.category_ids?.filter((data) => data.id !== item.value),
                   );
                 }}
                 data={category?.data?.map((item) => ({ label: item.name, value: item.id })) ?? []}
@@ -278,6 +227,7 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
                 }
                 onChange={(data) => {
                   formik.setFieldValue("project_id", data.value);
+                  formik.setFieldValue("project_name", data.label);
                 }}
                 onPressAdd={(data) => postProject({ name: data })}
                 onPressUpdate={(data) => patchProject({ name: String(data.label), project_id: String(data.value) })}
@@ -289,7 +239,13 @@ export const BottomSheetFormTask = forwardRef<BottomSheetFormTaskRef>((_, ref) =
           </ScrollView>
         </ThemedView>
         <ThemedView style={twrnc`p-4`}>
-          <Button variant="background" label="Submit" onPress={() => formik.handleSubmit()} />
+          <Button
+            variant="background"
+            isLoading={isPendingTaskEdit || isPendingTaskCreate}
+            disabled={isPendingTaskEdit || isPendingTaskCreate}
+            label="Submit"
+            onPress={() => formik.handleSubmit()}
+          />
         </ThemedView>
       </BottomSheetView>
     </BottomSheetModal>

@@ -6,6 +6,15 @@ import { useTinybaseCategoryList } from "../tinybase/useTinybaseCategoryList";
 import { useTinybaseProjectList } from "../tinybase/useTinybaseProjectList";
 import { usePatchTask } from "../endpoints/usePatchTask";
 import { useBottomSheetFormTaskContext } from "../stores/useBottomSheetFormTaskStore";
+import { PROJECT_LIST_QUERY_KEY } from "../endpoints/useGetProject";
+import { usePatchProject } from "../endpoints/usePatchProject";
+import { usePostProject } from "../endpoints/usePostProject";
+import { useDeleteCategory } from "../endpoints/useDeleteCategory";
+import { CATEGORY_LIST_QUERY_KEY } from "../endpoints/useGetCategory";
+import { usePatchCategory } from "../endpoints/usePatchCategory";
+import { usePostCategory } from "../endpoints/usePostCategory";
+import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteProject } from "../endpoints/useDeleteProject";
 
 export const useFormTask = () => {
   const { setIsVisible, setEditValue } = useBottomSheetFormTaskContext();
@@ -13,7 +22,7 @@ export const useFormTask = () => {
   const project = useTinybaseProjectList();
   const category = useTinybaseCategoryList();
 
-  const task = usePostTask({
+  const taskCreate = usePostTask({
     onSuccess: (data) => {
       Toast.show({
         text1: "Task created",
@@ -51,6 +60,98 @@ export const useFormTask = () => {
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const categoryCreate = usePostCategory({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: CATEGORY_LIST_QUERY_KEY,
+      });
+    },
+    onError: (error) => {
+      Toast.show({
+        text1: "Terjadi kesalahan",
+        text2: error.response?.data.message,
+        type: "error",
+      });
+    },
+  });
+
+  const categoryPatch = usePatchCategory({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: CATEGORY_LIST_QUERY_KEY,
+      });
+    },
+    onError: (error) => {
+      Toast.show({
+        text1: "Terjadi kesalahan",
+        text2: error.response?.data.message,
+        type: "error",
+      });
+    },
+  });
+
+  const categoryDelete = useDeleteCategory({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: CATEGORY_LIST_QUERY_KEY,
+      });
+    },
+    onError: (error) => {
+      Toast.show({
+        text1: "Terjadi kesalahan",
+        text2: error.response?.data.message,
+        type: "error",
+      });
+    },
+  });
+
+  const projectCreate = usePostProject({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: PROJECT_LIST_QUERY_KEY,
+      });
+    },
+    onError: (error) => {
+      Toast.show({
+        text1: "Terjadi kesalahan",
+        text2: error.response?.data.message,
+        type: "error",
+      });
+    },
+  });
+
+  const projectPatch = usePatchProject({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: PROJECT_LIST_QUERY_KEY,
+      });
+    },
+    onError: (error) => {
+      Toast.show({
+        text1: "Terjadi kesalahan",
+        text2: error.response?.data.message,
+        type: "error",
+      });
+    },
+  });
+
+  const projectDelete = useDeleteProject({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: PROJECT_LIST_QUERY_KEY,
+      });
+    },
+    onError: (error) => {
+      Toast.show({
+        text1: "Terjadi kesalahan",
+        text2: error.response?.data.message,
+        type: "error",
+      });
+    },
+  });
+
   useEffect(() => {
     if (project.error) {
       Toast.show({
@@ -74,7 +175,13 @@ export const useFormTask = () => {
   return {
     project,
     category,
-    task,
+    taskCreate,
     taskEdit,
+    categoryCreate,
+    categoryPatch,
+    categoryDelete,
+    projectCreate,
+    projectPatch,
+    projectDelete,
   };
 };
